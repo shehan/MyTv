@@ -1,6 +1,6 @@
-angular.module('starter.controllers', ['ngCordova'])
+angular.module('starter.controllers', ['ngCordova','$actionButton'])
 
-  .controller('TagListingController', function ($scope, $stateParams, $cordovaSQLite, $ionicPopup) {
+  .controller('TagListingController', function ($scope, $stateParams, $cordovaSQLite, $ionicPopup, $actionButton) {
     //$scope.chat = Chats.get($stateParams.chatId);
     var tags = getAllTags($cordovaSQLite, getAllTagsCallback);
     console.log(tags);
@@ -11,21 +11,76 @@ angular.module('starter.controllers', ['ngCordova'])
       ]
     };
 
+    var actionButton = $actionButton.create({
+      mainAction: {
+        icon: 'ion-android-add',
+        backgroundColor: '#387ef5',
+        textColor: ' white',
+        onClick: function() {
+          $scope.add();
+        }
+      }
+    });
+
+
+    $scope.add = function () {
+      $scope.data = {tagName: ''};
+      $ionicPopup.confirm({
+        template:'<input ng-model="data.tagName" type="text" placeholder="New Tag">',
+        title: 'Add new tag',
+        subTitle: 'Please Enter a name for the tag',
+        scope: $scope,
+        buttons: [
+          {
+            text: 'Cancel', onTap: function (e) {
+            return false;
+          }
+          },
+          {
+            text: '<b>Save</b>',
+            type: 'button-positive',
+            onTap: function (e) {
+              if ($scope.data.tagName != ''){
+                addTag($scope.data.tagName,$cordovaSQLite,getAllTagsCallback);
+              }
+              else{
+                $scope.add();
+              }
+            }
+          }
+        ]
+      });
+    };
+
+
     $scope.update = function (tag) {
-      $scope.data = {response: tag.name };
-      var confirmPopup  = $ionicPopup.prompt({
+      $scope.data = {tagName: tag.name};
+      $ionicPopup.confirm({
+        template: '<input ng-model="data.tagName" type="text" placeholder="Update Tag">',
         title: 'Update tag - ' + tag.name,
         subTitle: 'Please Enter the new name for this tag',
-        scope: $scope
-      }).then(function(res) {
-        if ($scope.data.response == '') {
-          $scope.update(tag);
-        }
-        else {
-          updateTag(tag.id,$scope.data.response,$cordovaSQLite,getAllTagsCallback)
-        }
+        scope: $scope,
+        buttons: [
+          {
+            text: 'Cancel', onTap: function (e) {
+            return false;
+          }
+          },
+          {
+            text: '<b>Save</b>',
+            type: 'button-positive',
+            onTap: function (e) {
+              if ($scope.data.tagName != '') {
+                updateTag(tag.id, $scope.data.tagName, $cordovaSQLite, getAllTagsCallback)
+              }
+              else {
+                $scope.update(tag);
+              }
+            }
+          }
+        ]
       });
-      };
+    };
 
 
 

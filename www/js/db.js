@@ -64,6 +64,21 @@ function getAllTags($cordovaSQLite, callback) {
 
 }
 
+function addTag(tagName, $cordovaSQLite, callback) {
+  var sql_insert_tag = 'INSERT INTO tag (name) VALUES ("'+tagName+'")';
+
+  console.log("Database - Insert Tag");
+  $cordovaSQLite.execute(db, sql_insert_tag)
+    .then(function (result) {
+      return getAllTags($cordovaSQLite, callback);
+    }, function (err) {
+      alert('Cannot insert tag');
+      console.log(err);
+    });
+
+}
+
+
 function removeTag(tagId, $cordovaSQLite, callback) {
   var sql_delete_tag = 'DELETE FROM tag WHERE id = '+tagId;
 
@@ -74,7 +89,7 @@ function removeTag(tagId, $cordovaSQLite, callback) {
       $cordovaSQLite.execute(db,"DELETE FROM show_tag WHERE id_tag = "+tagId);
       return getAllTags($cordovaSQLite, callback);
     }, function (err) {
-      alert('Cannot get Tags');
+      alert('Cannot delete tag');
       console.log(err);
     });
 
@@ -88,7 +103,7 @@ function updateTag(tagId, newTagName, $cordovaSQLite, callback) {
     .then(function (result) {
       return getAllTags($cordovaSQLite, callback);
     }, function (err) {
-      alert('Cannot get Tags');
+      alert('Cannot update tag');
       console.log(err);
     });
 

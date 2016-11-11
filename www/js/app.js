@@ -76,12 +76,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
         }
       })
 
-      .state('tab.tags', {
-        url: '/tags',
+      .state('tab.tagListing', {
+        url: '/tagListing',
         views: {
-          'tab-tags': {
-            templateUrl: 'templates/tab-search.html',
-            controller: 'AccountCtrl'
+          'tab-tagListing': {
+            templateUrl: 'templates/tab-tagListing.html',
+            controller: 'TagListingController'
           }
         }
       })

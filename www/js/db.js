@@ -96,10 +96,10 @@ function removeTag(tagId, $cordovaSQLite, callback) {
 }
 
 function updateTag(tagId, newTagName, $cordovaSQLite, callback) {
-  var sql_updatee_tag = 'UPDATE tag SET name ="' +newTagName+ '" WHERE id = '+tagId;
+  var sql_update_tag = 'UPDATE tag SET name ="' +newTagName+ '" WHERE id = '+tagId;
 
   console.log("Database - Update Tag");
-  $cordovaSQLite.execute(db, sql_updatee_tag)
+  $cordovaSQLite.execute(db, sql_update_tag)
     .then(function (result) {
       return getAllTags($cordovaSQLite, callback);
     }, function (err) {

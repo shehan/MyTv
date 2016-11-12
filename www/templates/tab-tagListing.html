@@ -1,14 +1,24 @@
 <ion-view view-title="Tags">
   <ion-content>
+    <div class="bar bar-header bar-light item-input-inset">
+      <label class="item-input-wrapper">
+        <i class="ion-ios-pricetags-outline placeholder-icon"></i>
+        <input type="text" placeholder="New Tag Name" ng-model="input.newTagName">
+      </label>
+      <button class="icon ion-ios-plus-outline placeholder-icon button button-default" ng-disabled="input.newTagName==''" ng-click="saveTag(input.newTagName)">
+        Add
+      </button>
+    </div>
+
     <ion-list>
       <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="tag in AllTags.items">
         <p>{{tag.name}}</p>
         <i class="icon ion-chevron-left icon-accessory"></i>
 
-        <ion-option-button class="button-dark" ng-click="update(tag)">
+        <ion-option-button class="button-dark" ng-click="showUpdate(tag)">
           Update
         </ion-option-button>
-        <ion-option-button class="button-assertive" ng-click="remove(tag)">
+        <ion-option-button class="button-assertive" ng-click="showRemove(tag)">
           Remove
         </ion-option-button>
       </ion-item>

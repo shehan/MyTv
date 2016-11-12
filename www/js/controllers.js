@@ -1,29 +1,79 @@
 angular.module('starter.controllers', ['ngCordova','$actionButton'])
 
-  .controller('TagListingController', function ($scope, $stateParams, $cordovaSQLite, $ionicPopup, $actionButton) {
-    //$scope.chat = Chats.get($stateParams.chatId);
-    var tags = getAllTags($cordovaSQLite, getAllTagsCallback);
-    console.log(tags);
+  .controller('TagListingController', function ($scope, $stateParams, $cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading) {
+
+
 
     $scope.AllTags = {
       items: [
         {id: '', name: ""}
       ]
     };
+    $scope.input = {newTagName:''};
+    $scope.dataLoading = false;
 
-    var actionButton = $actionButton.create({
-      mainAction: {
-        icon: 'ion-android-add',
-        backgroundColor: '#387ef5',
-        textColor: ' white',
-        onClick: function() {
-          $scope.add();
+    // Code that is executed every time view is opened
+    $scope.$on('$ionicView.enter', function() {
+      //shows the floating button
+      $actionButton.create({
+        mainAction: {
+          icon: 'ion-android-add',
+          backgroundColor: '#387ef5',
+          textColor: ' white',
+          removeOnStateChange: false,
+          onClick: function() {
+            $scope.showAdd();
+          }
         }
-      }
+      });
     });
 
+    $scope.show = function() {
+      $ionicLoading.show({
+        template: '<ion-spinner icon="bubbles"></ion-spinner><p>LOADING...</p>',
+        duration: 3000
+      }).then(function(){
+        console.log("The loading indicator is now displayed");
+      });
+    };
+    $scope.hide = function(){
+      $ionicLoading.hide().then(function(){
+        console.log("The loading indicator is now hidden");
+      });
+    }
 
-    $scope.add = function () {
+    $scope.show();
+    getAllTags($cordovaSQLite, getAllTagsCallback);
+
+    add = function(tagName){
+      $scope.show();
+      addTag(tagName,$cordovaSQLite,getAllTagsCallback);
+    };
+
+    update = function(tagId, tagName){
+      $scope.show();
+      updateTag(tagId, tagName, $cordovaSQLite, getAllTagsCallback);
+    };
+
+    remove = function(tagId){
+      $scope.show();
+      removeTag(tagId,$cordovaSQLite,getAllTagsCallback);
+    };
+
+
+    $scope.saveTag = function (tagName) {
+      if (tagName == undefined ||tagName == '')
+        $ionicPopup.alert({
+          title: 'Add new tag',
+          template: 'Please enter a tag name'
+        });
+      else{
+        add(tagName);
+        $scope.input.newTagName='';
+      }
+    };
+
+    $scope.showAdd = function () {
       $scope.data = {tagName: ''};
       $ionicPopup.confirm({
         template:'<input ng-model="data.tagName" type="text" placeholder="New Tag">',
@@ -41,10 +91,10 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
             type: 'button-positive',
             onTap: function (e) {
               if ($scope.data.tagName != ''){
-                addTag($scope.data.tagName,$cordovaSQLite,getAllTagsCallback);
+                add($scope.data.tagName)
               }
               else{
-                $scope.add();
+                $scope.showAdd();
               }
             }
           }
@@ -53,7 +103,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
     };
 
 
-    $scope.update = function (tag) {
+    $scope.showUpdate = function (tag) {
       $scope.data = {tagName: tag.name};
       $ionicPopup.confirm({
         template: '<input ng-model="data.tagName" type="text" placeholder="Update Tag">',
@@ -71,10 +121,10 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
             type: 'button-positive',
             onTap: function (e) {
               if ($scope.data.tagName != '') {
-                updateTag(tag.id, $scope.data.tagName, $cordovaSQLite, getAllTagsCallback)
+                update(tag.id, $scope.data.tagName);
               }
               else {
-                $scope.update(tag);
+                $scope.showUpdate(tag);
               }
             }
           }
@@ -83,8 +133,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
     };
 
 
-
-    $scope.remove = function (tag) {
+    $scope.showRemove = function (tag) {
       var confirmPopup  = $ionicPopup.confirm({
         title: 'Remove Tag - '+tag.name,
         template: 'Are you sure you want to delete this tag?'
@@ -92,7 +141,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
 
       confirmPopup.then(function(res) {
         if(res) {
-          removeTag(tag.id,$cordovaSQLite,getAllTagsCallback)
+          remove(tag.id);
           console.log('Tag Removed - '+tag.name);
         } else {
           console.log('Deletion canceled !');
@@ -108,8 +157,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
           name: data.rows.item(i).name
         });
       }
-
-      // $scope.AllTags = data;
+     $scope.hide();
     }
 
 

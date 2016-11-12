@@ -2,8 +2,6 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
 
   .controller('TagListingController', function ($scope, $stateParams, $cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading) {
 
-
-
     $scope.AllTags = {
       items: [
         {id: '', name: ""}
@@ -40,7 +38,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
       $ionicLoading.hide().then(function(){
         console.log("The loading indicator is now hidden");
       });
-    }
+    };
 
     $scope.show();
     getAllTags($cordovaSQLite, getAllTagsCallback);
@@ -186,8 +184,39 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
     $scope.chat = Chats.get($stateParams.chatId);
   })
 
-  .controller('AccountCtrl', function ($scope) {
-    $scope.settings = {
-      enableFriends: true
+  .controller('SearchController', function ($scope,$stateParams, $ionicPopup, $actionButton, $ionicLoading) {
+    $scope.input = {
+      searchQuery: ''
     };
+
+    $scope.show = function() {
+      $ionicLoading.show({
+        template: '<ion-spinner icon="bubbles"></ion-spinner><p>LOADING...</p>',
+        duration: 3000
+      }).then(function(){
+        console.log("The loading indicator is now displayed");
+      });
+    };
+    $scope.hide = function(){
+      $ionicLoading.hide().then(function(){
+        console.log("The loading indicator is now hidden");
+      });
+    };
+
+    $scope.runQuery = function (query) {
+      if (query == undefined ||query == '')
+        $ionicPopup.alert({
+          title: 'Search',
+          template: 'Please enter a search query'
+        });
+      else{
+        $scope.show();
+        Search(query, displaySearchResults);
+      }
+    };
+
+    function displaySearchResults(data) {
+      $scope.AllTags = data;
+      $scope.hide();
+    }
   });

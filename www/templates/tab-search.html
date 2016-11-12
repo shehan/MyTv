@@ -1,9 +1,23 @@
 <ion-view view-title="Search">
   <ion-content>
+    <div class="bar bar-header bar-light item-input-inset">
+      <label class="item-input-wrapper">
+        <i class="ion-ios-search placeholder-icon"></i>
+        <input type="text" placeholder="New Tag Name" ng-model="input.searchQuery">
+      </label>
+      <button class="icon ion-ios-search placeholder-icon button button-default" ng-disabled="input.searchQuery==''" ng-click="runQuery(input.searchQuery)">
+        Search
+      </button>
+    </div>
+
     <ion-list>
-    <ion-toggle  ng-model="settings.enableFriends">
-        Enable Friends
-    </ion-toggle>
+      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="result in AllTags.results">
+        <p>{{result.name}}</p>
+        <p>{{result.overview}}</p>
+        <img src="http://image.tmdb.org/t/p/w92/{{result.poster_path}}" >
+      </ion-item>
     </ion-list>
+
+
   </ion-content>
 </ion-view>

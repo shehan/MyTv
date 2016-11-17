@@ -2,8 +2,11 @@
  Database Connection class
  */
 var db = null;
+var cordovaSQLite = null;
 function initDatabase($cordovaSQLite) {
   try {
+    cordovaSQLite = $cordovaSQLite;
+
     db = window.openDatabase("MyTV.db", '1.0', 'MyTV Database', 65536);
 
     $cordovaSQLite.execute(db,"PRAGMA foreign_keys=ON");
@@ -32,6 +35,11 @@ function initDatabase($cordovaSQLite) {
                           'FOREIGN KEY (id_show) REFERENCES show (id) ON DELETE CASCADE' +
                         ')';
 
+    var sql_genre = 'CREATE TABLE IF NOT EXISTS genre (' +
+      'id INTEGER PRIMARY KEY, ' +
+      'name VARCHAR(255) ' +
+      ')';
+
     console.log("Database - Create Table - Tag");
     $cordovaSQLite.execute(db, sql_tag);
 
@@ -41,13 +49,78 @@ function initDatabase($cordovaSQLite) {
     console.log("Database - Create Table - Show_Tag");
     $cordovaSQLite.execute(db, sql_show_tag);
 
+    console.log("Database - Create Table - Genre");
+    $cordovaSQLite.execute(db, sql_genre);
+
    // DB_Test($cordovaSQLite);
+
+     DB_PopulateGenre()
 
   }
   catch(error){
     alert('Error Encountered During Database Init!');
     console.log(error);
   }
+}
+
+var genre_inprogress = false;
+function DB_PopulateGenre(result){
+  if ((result == undefined ||result == null) && !genre_inprogress){
+    genre_inprogress = true;
+    GetGenreList(DB_PopulateGenre)
+  }
+  else{
+    genre_inprogress = false;
+    console.log(result);
+
+    for(var i=0;i<result.genres.length;i++){
+      var sql_insert_genre = " INSERT OR REPLACE INTO genre (id, name) " +
+            "VALUES ("+result.genres[i].id+",'"+result.genres[i].name+"')"
+
+      cordovaSQLite.execute(db, sql_insert_genre)
+        .then(function (result) {
+          return console.log("Inserted genre");
+        }, function (err) {
+          console.log(err);
+        });
+
+    }
+
+  }
+
+}
+
+
+function getAllGenres(callback) {
+  var sql_select = 'SELECT * FROM genre';
+
+  console.log("Database - All Genres");
+  return cordovaSQLite.execute(db, sql_select)
+    .then(function (result) {
+        return callback(result);
+    }, function (err) {
+      alert('Cannot get genre id');
+      console.error(err);
+    });
+
+}
+
+function getGenreById(id, callback) {
+  var sql_select = 'SELECT * FROM genre' +
+                    'WHERE id='+id+'';
+
+  console.log("Database - Genre By Id:"+id);
+  return cordovaSQLite.execute(db, sql_select)
+    .then(function (result) {
+      if (callback == undefined)
+        return result;
+      else
+        return callback(result);
+    }, function (err) {
+      alert('Cannot get genre id');
+      console.error(err);
+    });
+
 }
 
 function getAllTags($cordovaSQLite, callback) {

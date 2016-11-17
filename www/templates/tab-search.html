@@ -11,12 +11,35 @@
     </div>
 
     <ion-list>
-      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="result in AllTags.results">
-        <p>{{result.name}}</p>
-        <p>{{result.overview}}</p>
-        <img src="http://image.tmdb.org/t/p/w92/{{result.poster_path}}" >
-      </ion-item>
+      <div class="list card" ng-repeat="result in AllTags.results">
+
+        <div class="item item-avatar">
+          <img src="http://image.tmdb.org/t/p/w92{{result.poster_path}}">
+          <h2>{{result.name}}</h2>
+        </div>
+
+        <div class="item item-body">
+          <img class="full-image" src="http://image.tmdb.org/t/p/w300{{result.backdrop_path}}">
+          <p>{{result.overview}}</p>
+          <p class="subdued">First aired on:
+            {{result.first_air_date}}
+          </p>
+          <p class="subdued">Country of origin:
+            <span style="font-style:italic" ng-repeat="country in result.origin_country">
+              {{country}};
+            </span>
+          </p>
+          <p class="subdued">Genre:
+            <span style="font-style:italic" ng-repeat="genre in result.genre_ids">
+              {{genre}};
+            </span>
+          </p>
+        </div>
+
+      </div>
+
     </ion-list>
+
 
 
   </ion-content>

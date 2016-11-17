@@ -20,3 +20,21 @@ function Search(query, callback) {
   });
 
 }
+
+function GetGenreList(callback) {
+  var base_url = 'https://api.themoviedb.org/3/genre/movie/list?';
+  base_url = base_url + 'api_key=' + api_key;
+  base_url = base_url + '&language=en-US';
+
+  $.ajax({
+    type: "GET",
+    "crossDomain": true,
+    "async": true,
+    url: base_url,
+    data: {},
+    headers: {}
+  }).done(function (data) {
+    return callback(data);
+  });
+
+}

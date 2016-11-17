@@ -189,6 +189,17 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
       searchQuery: ''
     };
 
+    // Code that is executed every time view is opened
+    $scope.$on('$ionicView.enter', function() {
+      getAllGenres(allGenres);
+    });
+
+    function allGenres(result) {
+      $scope.all_genres = result;
+    }
+
+
+
     $scope.show = function() {
       $ionicLoading.show({
         template: '<ion-spinner icon="bubbles"></ion-spinner><p>LOADING...</p>',
@@ -216,6 +227,18 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
     };
 
     function displaySearchResults(data) {
+      for(var i=0;i<data.results.length;i++){
+        for(var j=0;j<data.results[i].genre_ids.length;j++){
+          for(var k=0;k<$scope.all_genres.rows.length;k++){
+            if (data.results[i].genre_ids[j] == $scope.all_genres.rows[k].id)
+            {
+              console.log("Before:" + data.results[i].genre_ids[j]);
+              data.results[i].genre_ids[j] = $scope.all_genres.rows[k].name;
+              console.log("After:" + data.results[i].genre_ids[j]);
+            }
+          }
+        }
+      }
       $scope.AllTags = data;
       $scope.hide();
     }

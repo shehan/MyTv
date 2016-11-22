@@ -226,6 +226,17 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
       }
     };
 
+    $scope.toggleItem= function(item) {
+      if ($scope.isItemShown(item)) {
+        $scope.shownItem = null;
+      } else {
+        $scope.shownItem = item;
+      }
+    };
+    $scope.isItemShown = function(item) {
+      return $scope.shownItem === item;
+    };
+
     function displaySearchResults(data) {
       for(var i=0;i<data.results.length;i++){
         for(var j=0;j<data.results[i].genre_ids.length;j++){

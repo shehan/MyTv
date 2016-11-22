@@ -1,45 +1,127 @@
 <ion-view view-title="Search">
+  <style>
+    /* CORE */
+    .item-expand {
+      position: relative;
+      width: 100%;
+      max-height: 100px;
+      transition: max-height 0.1s ease-out;
+      overflow: hidden;
+    }
+
+    .item-expand.inactive:after {
+      content: "";
+      position: absolute;
+      bottom: 0px;
+      left: 0;
+      height: 15px;
+      width: 100%;
+      display: block;
+      background-image: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0, rgba(255, 255, 255, 0)),
+        color-stop(1, rgba(255, 255, 255, 1))
+      );
+      background-image: -o-linear-gradient(bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+      background-image: -moz-linear-gradient(bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+      background-image: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+      background-image: -ms-linear-gradient(bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+      background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+    }
+
+    .item-expand.active {
+      max-height: unset; /*200px*/
+      transition: max-height 0.3s ease-out;
+    }
+
+    /* DEMO */
+    .item-expand-footer {
+      color: red;
+      margin-top: 10px;
+    }
+
+    .item-expand-footer i {
+      margin-right: 10px;
+    }
+  </style>
   <ion-content>
     <div class="bar bar-header bar-light item-input-inset">
       <label class="item-input-wrapper">
         <i class="ion-ios-search placeholder-icon"></i>
         <input type="text" placeholder="New Tag Name" ng-model="input.searchQuery">
       </label>
-      <button class="icon ion-ios-search placeholder-icon button button-default" ng-disabled="input.searchQuery==''" ng-click="runQuery(input.searchQuery)">
+      <button class="icon ion-ios-search placeholder-icon button button-default" ng-disabled="input.searchQuery==''"
+              ng-click="runQuery(input.searchQuery)">
         Search
       </button>
     </div>
-
+    <!-- http://loring-dodge.azurewebsites.net/ionic-item-expand/ -->
     <ion-list>
-      <div class="list card" ng-repeat="result in AllTags.results">
 
-        <div class="item item-avatar">
-          <img src="http://image.tmdb.org/t/p/w92{{result.poster_path}}">
-          <h2>{{result.name}}</h2>
+      <ion-item ng-repeat="item in AllTags.results" class="item item-text-wrap">
+        <div>
+          <div class="item-avatar">
+            <img src="http://image.tmdb.org/t/p/w92{{item.poster_path}}">
+            <h2>{{item.name}}</h2>
+            <p class="subdued">
+              <span style="font-style:italic" ng-repeat="genre in item.genre_ids">{{genre}};&nbsp;</span>
+            </p>
+            <p class="subdued">First aired on:
+              {{item.first_air_date}}
+            </p>
+          </div>
+
+          <img class="full-image" onerror="this.src='../img/image_placeholder_banner.jpg'" ng-src="http://image.tmdb.org/t/p/w300{{item.backdrop_path}}">
+
+          <div ng-class="isItemShown(item) ? 'item-expand active' : 'item-expand inactive'">
+            <p >{{ item.overview }}</p></div>
+            <div ng-click="toggleItem(item)" class="item-expand-footer">
+              <i ng-class="isItemShown(item) ? 'ion-ios-minus-outline' : 'ion-ios-plus-outline'"></i>
+              {{ isItemShown(item) ? 'Less' : 'More' }}
+          </div>
+
         </div>
+      </ion-item>
 
-        <div class="item item-body">
-          <img class="full-image" src="http://image.tmdb.org/t/p/w300{{result.backdrop_path}}">
-          <p>{{result.overview}}</p>
-          <p class="subdued">First aired on:
-            {{result.first_air_date}}
-          </p>
-          <p class="subdued">Country of origin:
-            <span style="font-style:italic" ng-repeat="country in result.origin_country">
-              {{country}};
-            </span>
-          </p>
-          <p class="subdued">Genre:
-            <span style="font-style:italic" ng-repeat="genre in result.genre_ids">
-              {{genre}};
-            </span>
-          </p>
-        </div>
 
+      <!--
+            <div class="list card" ng-repeat="result in AllTags.results">
+
+              <div class="item item-avatar">
+                <img src="http://image.tmdb.org/t/p/w92{{result.poster_path}}">
+                <h2>{{result.name}}</h2>
+              </div>
+
+              <div class="item item-body">
+                <img class="full-image" src="http://image.tmdb.org/t/p/w300{{result.backdrop_path}}">
+                <p ng-class="isItemShown(result) ? 'item-expand active' : 'item-expand inactive'">{{result.overview}}</p>
+                <div ng-click="toggleItem(result)" class="item-expand-footer">
+                  <i ng-class="isItemShown(result) ? 'ion-ios-minus-outline' : 'ion-ios-plus-outline'"></i>
+                  {{ isItemShown(result) ? 'Less' : 'More' }}
+                </div>
+                {{result.overview | limitTo:150}}{{result.overview.length > 150 ? '...' : ''}}
+                    <p class="subdued">First aired on:
+                        {{result.first_air_date}}
+                      </p>
+                      <p class="subdued">Country of origin:
+                        <span style="font-style:italic" ng-repeat="country in result.origin_country">
+                          {{country}};
+                        </span>
+                      </p>
+                      <p class="subdued">Genre:
+                        <span style="font-style:italic" ng-repeat="genre in result.genre_ids">
+                          {{genre}};
+                        </span>
+                      </p>
+
+              </div>
+      -->
       </div>
 
-    </ion-list>
 
+    </ion-list>
 
 
   </ion-content>

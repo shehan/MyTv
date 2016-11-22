@@ -63,21 +63,22 @@
       <ion-item ng-repeat="item in AllTags.results" class="item item-text-wrap">
         <div>
           <div class="item-avatar">
-            <img src="http://image.tmdb.org/t/p/w92{{item.poster_path}}">
+            <img onerror="this.src='../img/image_placeholder_avatar.jpg'" ng-src="http://image.tmdb.org/t/p/w92{{item.poster_path}}">
             <h2>{{item.name}}</h2>
             <p class="subdued">
-              <span style="font-style:italic" ng-repeat="genre in item.genre_ids">{{genre}};&nbsp;</span>
+              <span style="font-style:italic" ng-repeat="genre in item.genre_ids">{{genre}}{{$last ? '' : ', '}}</span>
             </p>
-            <p class="subdued">First aired on:
+            <p ng-if="item.first_air_date.length > 0" class="subdued">First aired on:
               {{item.first_air_date}}
             </p>
           </div>
 
           <img class="full-image" onerror="this.src='../img/image_placeholder_banner.jpg'" ng-src="http://image.tmdb.org/t/p/w300{{item.backdrop_path}}">
 
-          <div ng-class="isItemShown(item) ? 'item-expand active' : 'item-expand inactive'">
-            <p >{{ item.overview }}</p></div>
-            <div ng-click="toggleItem(item)" class="item-expand-footer">
+          <div  ng-class="isItemShown(item) ? 'item-expand active' : 'item-expand inactive'">
+            <p >{{ item.overview }}</p>
+          </div>
+            <div ng-if="item.overview.length > 0" ng-click="toggleItem(item)" class="item-expand-footer">
               <i ng-class="isItemShown(item) ? 'ion-ios-minus-outline' : 'ion-ios-plus-outline'"></i>
               {{ isItemShown(item) ? 'Less' : 'More' }}
           </div>

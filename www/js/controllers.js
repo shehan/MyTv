@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['ngCordova','$actionButton'])
+angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal-select'])
 
   .controller('TagListingController', function ($scope, $stateParams, $cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading) {
 
@@ -186,7 +186,52 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
 
 //**************** START: AddShowController ****************//
 
-  .controller('AddShowController', function ($scope) {
+  .controller('AddShowController', function ($scope,$stateParams,$ionicLoading) {
+    $scope.showId = $stateParams.showId;
+    $scope.TvShow='';
+
+    $scope.tagSelectModel = [];
+    $scope.selectableTags = [{
+      name: "Mauro",
+      id: "1"
+    }, {
+      name: "Silvia",
+      id: "2"
+    }, {
+      name: "Merlino",
+      id: "3"
+    } ];
+
+    $scope.show = function() {
+      $ionicLoading.show({
+        template: '<ion-spinner icon="bubbles"></ion-spinner><p>LOADING...</p>'
+      }).then(function(){
+        console.log("The loading indicator is now displayed");
+      });
+    };
+    $scope.hide = function(){
+      $ionicLoading.hide().then(function(){
+        console.log("The loading indicator is now hidden");
+      });
+    };
+
+    $scope.show();
+    if ($scope.showId != -1){
+      GetShowDetailsById($scope.showId, DisplayShowDetails);
+    }
+    else{
+      DisplayShowDetails(null)
+    }
+
+    function DisplayShowDetails(data){
+      $scope.hide();
+
+      if(data != null){
+        $scope.TvShow = data;
+        console.log(data);
+      }
+    }
+
   })
 
 

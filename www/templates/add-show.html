@@ -1,25 +1,59 @@
 <ion-view view-title="Add Show">
   <ion-content padding="true" class="has-header">
     <form id="cloudTabDefaultPage-form1" class="list">
+
       <label class="item item-input" id="show-tite" name="Title">
         <span class="input-label">Title</span>
-        <input type="text" placeholder="Title">
+        <input type="text" placeholder="Title" ng-model="TvShow.name">
       </label>
+
       <label class="item item-input" id="show-date" name="Date">
         <span class="input-label">Date</span>
         <input type="date" placeholder="">
       </label>
+
       <label class="item item-input" id="show-time" name="Time">
         <span class="input-label">Time</span>
         <input type="time" placeholder="">
       </label>
+
       <ion-toggle toggle-class="toggle-balanced" ng-checked="true" id="show-repeat">Repeat</ion-toggle>
+
       <label class="item item-input" id="show-channel" name="Channel">
         <span class="input-label">Channel</span>
         <input type="number" placeholder="99">
       </label>
+
       <label class="item item-input" id="show-notes" name="Notes">
         <span class="input-label">Notes</span><textarea placeholder="Notes"></textarea></label>
+
+
+      <div class="item item-input">
+        <label class="item item-input item-input-wrapper" id="show-tags" name="Tags"
+               style="background: transparent;padding-top: 0px;padding-bottom: 0px;border-top-width: 0px;border-bottom-width: 0px;border-left-width: 0px;border-right-width: 0px;padding-left: 0px;padding-right: 0px;margin-top: 0px;margin-bottom: 0px;">
+          <span class="input-label">Tags</span>
+          <input ng-if="tagSelectModel.length != 0" type="text" value="{{tagSelectModel}}" disabled
+                 style="background: transparent">
+        </label>
+        <button class="icon ion-ios-plus-outline button button-light" modal-select="" ng-model="tagSelectModel" options="selectableTags" multiple="true" modal-title="Select Tags">
+          <div class="option">
+            {{option}}
+          </div>
+        </button>
+      </div>
+
+
+      <!--
+      <button class="button button-positive" modal-select="" ng-model="tagSelectModel" options="selectableTags" multiple="true" modal-title="Select some persons">
+        Select it
+        <div class="option">
+          {{option}}
+        </div>
+      </button>
+      <h3>
+        Selected value: {{tagSelectModel}}
+      </h3>
+-->
       <div id="show-button-bar" class="button-bar">
         <button id="show-button-save" style="font-size:20px;border-radius:8px 8px 8px 8px;"
                 class="button button-positive  button-block icon ion-android-add-circle"> Save

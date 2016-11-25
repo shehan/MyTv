@@ -184,7 +184,17 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
     $scope.chat = Chats.get($stateParams.chatId);
   })
 
-  .controller('SearchController', function ($scope,$stateParams, $ionicPopup, $actionButton, $ionicLoading) {
+//**************** START: AddShowController ****************//
+
+  .controller('AddShowController', function ($scope) {
+  })
+
+
+//**************** END: AddShowController ****************//
+
+
+//**************** START: SearchController ****************//
+  .controller('SearchController', function ($scope,$stateParams, $ionicPopup, $actionButton, $ionicLoading, $state) {
     $scope.input = {
       searchQuery: ''
     };
@@ -239,6 +249,11 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
       return $scope.shownItem === item;
     };
 
+    $scope.NavAddShow = function() {
+      alert('Nav clicked');
+      $state.go('addShow')
+    };
+
     function displaySearchResults(data) {
       $scope.AllTags = {
         results: [ ]
@@ -262,3 +277,4 @@ angular.module('starter.controllers', ['ngCordova','$actionButton'])
       $scope.hide();
     }
   });
+//**************** END: SearchController ****************//

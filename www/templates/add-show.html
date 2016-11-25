@@ -1,0 +1,30 @@
+<ion-view view-title="Add Show">
+  <ion-content padding="true" class="has-header">
+    <form id="cloudTabDefaultPage-form1" class="list">
+      <label class="item item-input" id="show-tite" name="Title">
+        <span class="input-label">Title</span>
+        <input type="text" placeholder="Title">
+      </label>
+      <label class="item item-input" id="show-date" name="Date">
+        <span class="input-label">Date</span>
+        <input type="date" placeholder="">
+      </label>
+      <label class="item item-input" id="show-time" name="Time">
+        <span class="input-label">Time</span>
+        <input type="time" placeholder="">
+      </label>
+      <ion-toggle toggle-class="toggle-balanced" ng-checked="true" id="show-repeat">Repeat</ion-toggle>
+      <label class="item item-input" id="show-channel" name="Channel">
+        <span class="input-label">Channel</span>
+        <input type="number" placeholder="99">
+      </label>
+      <label class="item item-input" id="show-notes" name="Notes">
+        <span class="input-label">Notes</span><textarea placeholder="Notes"></textarea></label>
+      <div id="show-button-bar" class="button-bar">
+        <button id="show-button-save" style="font-size:20px;border-radius:8px 8px 8px 8px;"
+                class="button button-positive  button-block icon ion-android-add-circle"> Save
+        </button>
+      </div>
+    </form>
+  </ion-content>
+</ion-view>

@@ -86,6 +86,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
         }
       })
 
+      .state('tab.addShow', {
+        url: '/addShow/:showId',
+        views: {
+          'tab-add-show': {
+            templateUrl: 'templates/add-show.html',
+            controller: 'AddShowController'
+          }
+        }
+      })
+
       .state('tab.search', {
         url: '/search',
         views: {

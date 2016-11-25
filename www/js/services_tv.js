@@ -17,6 +17,9 @@ function Search(query, callback) {
     headers: {}
   }).done(function (data) {
     return callback(data);
+  }).fail(function (error){
+    console.log('Search query failing: '+error.statusText);
+    return callback(null);
   });
 
 }

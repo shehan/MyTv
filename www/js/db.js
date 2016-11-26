@@ -21,6 +21,14 @@ function initDatabase($cordovaSQLite) {
     var sql_show = 'CREATE TABLE IF NOT EXISTS show (' +
                       'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
                       'name VARCHAR(255), ' +
+                      'show_id VARCHAR(255), ' +
+                      'notes VARCHAR(255), ' +
+                      'date VARCHAR(255), ' +
+                      'time VARCHAR(255), ' +
+                      'channel INTEGER, ' +
+                      'repeat BOOLEAN, ' +
+                      'show_overview TEXT,' +
+                      'show_backdrop BLOB,' +
                       'created_on DATETIME DEFAULT CURRENT_TIMESTAMP, ' +
                       'modified_on DATETIME DEFAULT CURRENT_TIMESTAMP' +
                     ')';
@@ -54,7 +62,7 @@ function initDatabase($cordovaSQLite) {
 
    // DB_Test($cordovaSQLite);
 
-     DB_PopulateGenre()
+   //  DB_PopulateGenre()
 
   }
   catch(error){
@@ -137,6 +145,19 @@ function getAllTags($cordovaSQLite, callback) {
 
 }
 
+function getAllShows($cordovaSQLite, callback) {
+  var sql_select = 'SELECT * FROM show Order By name';
+
+  console.log("Database - Select All Shows");
+  $cordovaSQLite.execute(db, sql_select)
+    .then(function (result) {
+      return callback(result);
+    }, function (err) {
+      alert('Cannot get Shows');
+      console.error(err);
+    });
+}
+
 function addTag(tagName, $cordovaSQLite, callback) {
   var sql_insert_tag = 'INSERT INTO tag (name) VALUES ("'+tagName+'")';
 
@@ -182,6 +203,22 @@ function updateTag(tagId, newTagName, $cordovaSQLite, callback) {
 
 }
 
+function addShow(show_id, name, date, time, repeat, channel, notes, show_overview, show_backdrop, $cordovaSQLite, callback) {
+
+  var sql_insert_show = 'INSERT INTO show (show_id, name, date, time, repeat, channel, notes, show_overview, show_backdrop) VALUES ' +
+                          '("'+show_id+'","'+name+'","'+date+'","'+time+'",'+repeat+','+channel+',"'+notes+'","'+show_overview+'","'+show_backdrop+'")';
+
+
+  console.log("Database - Insert Show");
+  $cordovaSQLite.execute(db, sql_insert_show)
+    .then(function (result) {
+      return getAllTags($cordovaSQLite, callback);
+    }, function (err) {
+      alert('Cannot insert tag');
+      console.log(err);
+    });
+
+}
 
   function DB_Test($cordovaSQLite)
   {

@@ -161,9 +161,62 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
   })
 
+//**************** START: MyShowsController ****************//
+  .controller('DashCtrl', function ($scope,$cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading) {
 
-  .controller('DashCtrl', function ($scope) {
+    $scope.AllShows = {
+      items: [{
+        channel:null,
+        date:null,
+        id:null,
+        name:null,
+        notes:null,
+        repeat:null,
+        show_backdrop:null,
+        show_id:null,
+        show_overview:null,
+        time:null
+      }]
+    };
+
+
+    $scope.show = function() {
+      $ionicLoading.show({
+        template: '<ion-spinner icon="bubbles"></ion-spinner><p>LOADING...</p>'
+      }).then(function(){
+        console.log("The loading indicator is now displayed");
+      });
+    };
+    $scope.hide = function(){
+      $ionicLoading.hide().then(function(){
+        console.log("The loading indicator is now hidden");
+      });
+    };
+
+    $scope.show();
+    getAllShows($cordovaSQLite, getAllShowsCallback)
+
+    function getAllShowsCallback(data){
+      $scope.AllShows.items.length = 0;
+      for (var i = 0; i < data.rows.length; i++) {
+        $scope.AllShows.items.push({
+          channel:data.rows.item(i).channel,
+          date:data.rows.item(i).date,
+          id:data.rows.item(i).id,
+          name:data.rows.item(i).name,
+          notes:data.rows.item(i).notes,
+          repeat:data.rows.item(i).repeat,
+          show_backdrop:data.rows.item(i).show_backdrop,
+          show_id:data.rows.item(i).show_id,
+          show_overview:unescape(data.rows.item(i).show_overview),
+          time:data.rows.item(i).time
+        });
+      }
+      $scope.hide();
+    }
   })
+  //**************** END: MyShowsController ****************//
+
 
   .controller('ChatsCtrl', function ($scope, Chats) {
     // With the new view caching in Ionic, Controllers are only called
@@ -199,6 +252,8 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
     $scope.showTime = { value: null };
     $scope.showChannel = { value: null };
     $scope.showNotes = { value: '' };
+    $scope.showOverview= { value: '' };
+    $scope.showBackdrop= { value: null };
 
 
     $scope.TvShow='';
@@ -246,7 +301,6 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
     getAllTags($cordovaSQLite, getAllTagsCallback);
 
     $scope.saveShow = function() {
-
       if ($scope.showName.value == undefined ||$scope.showName.value == ''){
         $ionicPopup.alert({
           title: 'Add Show',
@@ -263,16 +317,41 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         return;
       }
 
+      var date_parsed = Date.parse($scope.showDate.value);
+      var date_value = new Date(date_parsed).toLocaleDateString();//.toJSON().slice(0, 10);
 
+      var time_parsed = Date.parse($scope.showTime.value);
+      var time_value = new Date(time_parsed).toLocaleTimeString();//.toJSON().slice(11, 19);
 
-     // alert($scope.showId);
-      //alert($scope.showName.value);
-      //alert($scope.showDate.value);
-     // alert($scope.showTime.value);
-     // alert($scope.showChannel.value);
-      //alert($scope.showNotes.value);
-     // alert($scope.showRepeat.value);
+      var repeat_value = $scope.showRepeat.value?1:0;
+
+      bannerImage = document.getElementById('bannerImg');
+      imgData = getBase64Image(bannerImage);
+
+      $scope.show();
+
+      addShow(
+        $scope.showId,
+        $scope.showName.value,
+        date_value,
+        time_value  ,
+        repeat_value,
+        $scope.showChannel.value,
+        $scope.showNotes.value,
+        escape($scope.showOverview.value),
+        imgData,
+        $cordovaSQLite,
+        saveShowCallback
+      );
+
     };
+
+
+    function saveShowCallback(data) {
+      console.log(data);
+      $scope.hide();
+    }
+
 
     function getAllTagsCallback(data) {
       $scope.AllTags.length = 0;
@@ -291,8 +370,22 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
       if(data != null){
         $scope.TvShow = data;
         $scope.showName.value = $scope.TvShow.name;
+        $scope.showOverview.value = $scope.TvShow.overview;
         console.log(data);
       }
+    }
+
+    function getBase64Image(img) {
+      var canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      var dataURL = canvas.toDataURL("image/png");
+
+      return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
     }
 
   })

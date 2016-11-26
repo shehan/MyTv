@@ -186,21 +186,40 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
 //**************** START: AddShowController ****************//
 
-  .controller('AddShowController', function ($scope,$stateParams,$ionicLoading) {
+  .controller('AddShowController', function ($scope,$stateParams, $cordovaSQLite, $ionicLoading, $ionicPopup) {
     $scope.showId = $stateParams.showId;
+
+    $scope.show={};
+    //$scope.show.showDate = new Date(2013, 9, 22);
+    //$scope.show.showRepeat = true;
+
+    $scope.showName= { value: '' };
+    $scope.showRepeat = { value: false };
+    $scope.showDate = { value: new Date(Date.now()) };
+    $scope.showTime = { value: null };
+    $scope.showChannel = { value: null };
+    $scope.showNotes = { value: '' };
+
+
     $scope.TvShow='';
 
+    $scope.AllTags = [
+        {id: '', name: ''}
+    ];
+
+    $scope.AssignedTags = [
+      {id: ''}
+    ];
+
     $scope.tagSelectModel = [];
-    $scope.selectableTags = [{
-      name: "Mauro",
-      id: "1"
-    }, {
-      name: "Silvia",
-      id: "2"
-    }, {
-      name: "Merlino",
-      id: "3"
-    } ];
+
+
+    $scope.onModelItemSelected = function(newValue, oldValue) {
+      $scope.AssignedTags = newValue;
+      console.log(newValue + ":" + oldValue);
+    };
+
+
 
     $scope.show = function() {
       $ionicLoading.show({
@@ -223,11 +242,55 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
       DisplayShowDetails(null)
     }
 
+    $scope.show();
+    getAllTags($cordovaSQLite, getAllTagsCallback);
+
+    $scope.saveShow = function() {
+
+      if ($scope.showName.value == undefined ||$scope.showName.value == ''){
+        $ionicPopup.alert({
+          title: 'Add Show',
+          template: 'Please enter a Show name'
+        });
+        return;
+      }
+
+      if ($scope.showDate.value == undefined ||$scope.showDate.value == ''){
+        $ionicPopup.alert({
+          title: 'Add Show',
+          template: 'Please enter a Show date'
+        });
+        return;
+      }
+
+
+
+     // alert($scope.showId);
+      //alert($scope.showName.value);
+      //alert($scope.showDate.value);
+     // alert($scope.showTime.value);
+     // alert($scope.showChannel.value);
+      //alert($scope.showNotes.value);
+     // alert($scope.showRepeat.value);
+    };
+
+    function getAllTagsCallback(data) {
+      $scope.AllTags.length = 0;
+      for (var i = 0; i < data.rows.length; i++) {
+        $scope.AllTags.push({
+          id: data.rows.item(i).id,
+          name: data.rows.item(i).name
+        });
+      }
+      $scope.hide();
+    }
+
     function DisplayShowDetails(data){
       $scope.hide();
 
       if(data != null){
         $scope.TvShow = data;
+        $scope.showName.value = $scope.TvShow.name;
         console.log(data);
       }
     }

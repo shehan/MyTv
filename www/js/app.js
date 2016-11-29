@@ -89,7 +89,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       .state('tab.addShow', {
         url: '/addShow/:showId',
         views: {
-          'tab-add-show': {
+          'tab-search': {
             templateUrl: 'templates/add-show.html',
             controller: 'AddShowController'
           }

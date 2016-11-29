@@ -1,20 +1,20 @@
+
+
+
 <ion-view view-title="My Shows">
-  <ion-content class="padding">
-    <ion-list>
-
-      <div class="list card" ng-repeat="result in AllShows.items">
-
-
-        <div class="item item-body">
-          <h2>{{result.name}}</h2>
-
-          <img src="data:image/png;base64,{{result.show_backdrop}}" id="showBanner" />
-
-
-        </div>
+  <ion-content padding="true" class="has-header">
+    <ion-refresher pulling-text="Pull to refresh" on-refresh="doRefresh()"></ion-refresher>
+    <div class="list card" id="myShows-card21" ng-repeat="result in AllShows.items">
+      <ion-item id="myShows-list-item4" class="item item-divider bar bar-header bar-stable">{{result.name}}</ion-item>
+      <div style="margin: 0px;  text-align: center;">
+        <img src="data:image/png;base64,{{result.show_backdrop}}" id="showBanner" style="object-fit: cover;" />
       </div>
-
-
-    </ion-list>
+      <ion-item class="item-icon-left assertive item item-divider" id="myShows-list-item5" style="font-weight: 200">
+        <i class="icon ion-ios-calendar-outline"></i> {{result.day}}, {{result.time}}</ion-item>
+    </div>
   </ion-content>
+
+
+
+
 </ion-view>

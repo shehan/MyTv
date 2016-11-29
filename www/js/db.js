@@ -24,6 +24,7 @@ function initDatabase($cordovaSQLite) {
                       'show_id VARCHAR(255), ' +
                       'notes VARCHAR(255), ' +
                       'date VARCHAR(255), ' +
+                      'day VARCHAR(255), ' +
                       'time VARCHAR(255), ' +
                       'channel INTEGER, ' +
                       'repeat BOOLEAN, ' +
@@ -203,10 +204,10 @@ function updateTag(tagId, newTagName, $cordovaSQLite, callback) {
 
 }
 
-function addShow(show_id, name, date, time, repeat, channel, notes, show_overview, show_backdrop, $cordovaSQLite, callback) {
+function addShow(show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop, $cordovaSQLite, callback) {
 
-  var sql_insert_show = 'INSERT INTO show (show_id, name, date, time, repeat, channel, notes, show_overview, show_backdrop) VALUES ' +
-                          '("'+show_id+'","'+name+'","'+date+'","'+time+'",'+repeat+','+channel+',"'+notes+'","'+show_overview+'","'+show_backdrop+'")';
+  var sql_insert_show = 'INSERT INTO show (show_id, name, date, day,   time, repeat, channel, notes, show_overview, show_backdrop) VALUES ' +
+                          '("'+show_id+'","'+name+'","'+date+'","'+day+'","'+time+'",'+repeat+','+channel+',"'+notes+'","'+show_overview+'","'+show_backdrop+'")';
 
 
   console.log("Database - Insert Show");

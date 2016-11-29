@@ -164,10 +164,18 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 //**************** START: MyShowsController ****************//
   .controller('DashCtrl', function ($scope,$cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading) {
 
+    $scope.doRefresh = function() {
+      $scope.show();
+      getAllShows($cordovaSQLite, getAllShowsCallback)
+      $scope.$broadcast('scroll.refreshComplete');
+      $scope.$apply()
+    };
+
     $scope.AllShows = {
       items: [{
         channel:null,
         date:null,
+        day:null,
         id:null,
         name:null,
         notes:null,
@@ -202,6 +210,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         $scope.AllShows.items.push({
           channel:data.rows.item(i).channel,
           date:data.rows.item(i).date,
+          day:data.rows.item(i).day,
           id:data.rows.item(i).id,
           name:data.rows.item(i).name,
           notes:data.rows.item(i).notes,
@@ -241,6 +250,12 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
   .controller('AddShowController', function ($scope,$stateParams, $cordovaSQLite, $ionicLoading, $ionicPopup) {
     $scope.showId = $stateParams.showId;
+
+
+    // Code that is executed every time view is opened
+    $scope.$on('$ionicView.enter', function() {
+      jQuery("#bannerImg").attr('src','http://image.tmdb.org/t/p/w300'+$scope.TvShow.backdrop_path);
+    });
 
     $scope.show={};
     //$scope.show.showDate = new Date(2013, 9, 22);
@@ -300,7 +315,14 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
     $scope.show();
     getAllTags($cordovaSQLite, getAllTagsCallback);
 
+    function formatHHMM(date) {
+      function z(n){return (n<10?'0':'') + n;}
+      var h = date.getHours();
+      return z(h%12) + ':' + z(date.getMinutes()) + ' ' + (h<12?'AM':'PM');
+    }
+
     $scope.saveShow = function() {
+
       if ($scope.showName.value == undefined ||$scope.showName.value == ''){
         $ionicPopup.alert({
           title: 'Add Show',
@@ -316,14 +338,55 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         });
         return;
       }
+      else{
+        var timestamp=Date.parse($scope.showDate.value);
+        if (isNaN(timestamp)!=false)
+        {
+          $ionicPopup.alert({
+            title: 'Add Show',
+            template: 'Please enter a valid Show date'
+          });
+          return;
+        }
+      }
+
+      if ($scope.showTime.value != null || $scope.showTime.value == undefined) {
+        var timestamp = Date.parse($scope.showTime.value);
+        if (isNaN(timestamp) != false) {
+          $ionicPopup.alert({
+            title: 'Add Show',
+            template: 'Please enter a valid Show time'
+          });
+          return;
+        }
+      }
 
       var date_parsed = Date.parse($scope.showDate.value);
       var date_value = new Date(date_parsed).toLocaleDateString();//.toJSON().slice(0, 10);
 
       var time_parsed = Date.parse($scope.showTime.value);
-      var time_value = new Date(time_parsed).toLocaleTimeString();//.toJSON().slice(11, 19);
+      var time_value = formatHHMM(new Date(time_parsed));
+     // var time_value = new Date(time_parsed).toLocaleTimeString();//.toJSON().slice(11, 19);
 
       var repeat_value = $scope.showRepeat.value?1:0;
+
+      var weekday = new Array(7);
+      weekday[0] = "Sunday";
+      weekday[1] = "Monday";
+      weekday[2] = "Tuesday";
+      weekday[3] = "Wednesday";
+      weekday[4] = "Thursday";
+      weekday[5] = "Friday";
+      weekday[6] = "Saturday";
+
+      var d = new Date(date_parsed);
+      var day= weekday[d.getDay()];
+
+
+
+      console.log($scope.TvShow.backdrop_path);
+      //var bannerImage = document.createElement("IMG");
+      //bannerImage.src = 'http://image.tmdb.org/t/p/w300'+$scope.TvShow.backdrop_path;
 
       bannerImage = document.getElementById('bannerImg');
       imgData = getBase64Image(bannerImage);
@@ -334,6 +397,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         $scope.showId,
         $scope.showName.value,
         date_value,
+        day,
         time_value  ,
         repeat_value,
         $scope.showChannel.value,
@@ -349,6 +413,10 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
     function saveShowCallback(data) {
       console.log(data);
+      $ionicPopup.alert({
+        title: 'Add Show',
+        template: $scope.showName.value+' has been added to your schedule!'
+      });
       $scope.hide();
     }
 

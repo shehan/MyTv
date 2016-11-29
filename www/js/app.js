@@ -96,6 +96,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
         }
       })
 
+
       .state('tab.search', {
         url: '/search',
         views: {

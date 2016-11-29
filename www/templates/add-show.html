@@ -4,7 +4,7 @@
 
       <label class="item item-input" id="show-tite" name="Title">
         <span class="input-label">Title</span>
-        <input type="text" placeholder="Title" ng-model="showName.value" required>
+        <input ng-disabled="showId != '-1'" type="text" placeholder="Title" ng-model="showName.value" required>
       </label>
 
       <label class="item item-input" id="show-date" name="Date">
@@ -50,9 +50,8 @@
         </button>
       </div>
 
-      <img onerror="this.src='../img/image_placeholder_banner.jpg'" crossOrigin="Anonymous"
+      <img style="display: none" onerror="this.src='../img/image_placeholder_banner.jpg'" crossOrigin="Anonymous"
       ng-src="http://image.tmdb.org/t/p/w300{{TvShow.backdrop_path}}" id="bannerImg" />
-      {{showOverview.value}}
 
     </form>
   </ion-content>

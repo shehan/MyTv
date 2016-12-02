@@ -1,15 +1,15 @@
 /*
  Database Connection class
  */
-var db = null;
+var db = window.openDatabase("MyTV.db", '1.0', 'MyTV Database', 65536);
 var cordovaSQLite = null;
 function initDatabase($cordovaSQLite) {
   try {
+
     cordovaSQLite = $cordovaSQLite;
 
-    db = window.openDatabase("MyTV.db", '1.0', 'MyTV Database', 65536);
-
-    $cordovaSQLite.execute(db,"PRAGMA foreign_keys=ON");
+    db = window.openDatabase("MyTV.db", '1.0', 'MyTV Database', 65536)
+    $cordovaSQLite.execute(db,"PRAGMA foreign_keys=ON");;
 
     var sql_tag = 'CREATE TABLE IF NOT EXISTS tag (' +
                     'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' +
@@ -30,6 +30,7 @@ function initDatabase($cordovaSQLite) {
                       'repeat BOOLEAN, ' +
                       'show_overview TEXT,' +
                       'show_backdrop BLOB,' +
+                      'notification_id INTEGER,' +
                       'created_on DATETIME DEFAULT CURRENT_TIMESTAMP, ' +
                       'modified_on DATETIME DEFAULT CURRENT_TIMESTAMP' +
                     ')';
@@ -63,7 +64,7 @@ function initDatabase($cordovaSQLite) {
 
    // DB_Test($cordovaSQLite);
 
-   //  DB_PopulateGenre()
+    DB_PopulateGenre()
 
   }
   catch(error){
@@ -147,6 +148,7 @@ function getAllTags($cordovaSQLite, callback) {
 }
 
 function getAllShows($cordovaSQLite, callback) {
+
   var sql_select = 'SELECT * FROM show Order By name';
 
   console.log("Database - Select All Shows");
@@ -204,10 +206,10 @@ function updateTag(tagId, newTagName, $cordovaSQLite, callback) {
 
 }
 
-function addShow(show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop,tagList, $cordovaSQLite, callback) {
+function addShow(show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop,tagList,notification_id, $cordovaSQLite, callback) {
 
-  var sql_insert_show = 'INSERT INTO show (show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop) VALUES ' +
-                          '("'+show_id+'","'+name+'","'+date+'","'+day+'","'+time+'",'+repeat+','+channel+',"'+notes+'","'+show_overview+'","'+show_backdrop+'")';
+  var sql_insert_show = 'INSERT INTO show (show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop, notification_id) VALUES ' +
+                          '("'+show_id+'","'+name+'","'+date+'","'+day+'","'+time+'",'+repeat+','+channel+',"'+notes+'","'+show_overview+'","'+show_backdrop+'",'+notification_id+')';
 
 
   console.log("Database - Insert Show");

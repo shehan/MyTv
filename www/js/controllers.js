@@ -248,7 +248,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
 //**************** START: AddShowController ****************//
 
-  .controller('AddShowController', function ($scope,$stateParams, $cordovaSQLite, $ionicLoading, $ionicPopup) {
+  .controller('AddShowController', function ($scope,$stateParams, $cordovaSQLite, $ionicLoading, $ionicPopup, $cordovaLocalNotification) {
     $scope.showId = $stateParams.showId;
 
 
@@ -364,6 +364,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
       var time_parsed = Date.parse($scope.showTime.value);
       var time_value = formatHHMM(new Date(time_parsed));
+      var time_object = new Date(time_parsed);
      // var time_value = new Date(time_parsed).toLocaleTimeString();//.toJSON().slice(11, 19);
 
       var repeat_value = $scope.showRepeat.value?1:0;
@@ -381,13 +382,11 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
       var day= weekday[d.getDay()];
 
 
-
-      console.log($scope.TvShow.backdrop_path);
-      //var bannerImage = document.createElement("IMG");
-      //bannerImage.src = 'http://image.tmdb.org/t/p/w300'+$scope.TvShow.backdrop_path;
+      var notification_id = $scope.showId + Math.floor(Math.random()*100);
 
       bannerImage = document.getElementById('bannerImg');
       imgData = getBase64Image(bannerImage);
+
 
       $scope.show();
 
@@ -403,12 +402,54 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         escape($scope.showOverview.value),
         imgData,
         $scope.AssignedTags,
+        notification_id,
         $cordovaSQLite,
         saveShowCallback
       );
 
+      addLocalNotification($scope.showId, $scope.showName.value, $scope.showChannel.value, repeat_value, date_value, time_object,notification_id)
+
     };
 
+    function addLocalNotification(show_id, show_name, show_channel, show_repeat, date_value, time_object, notification_id){
+      var message_title = "MyTV Reminder";
+      var message_body = show_name +" starts in 30 minutes";
+      if (show_channel != null || show_channel != '')
+        message_body = message_body +" on channel "+show_channel;
+
+      var alarmTime;
+      alarmTime = new Date(date_value);
+      alarmTime.setHours(time_object.getHours(),time_object.getMinutes(),0);
+
+      if (show_repeat){
+        $cordovaLocalNotification.add({
+          id: notification_id,
+          firstAt: alarmTime,
+          message: message_body,
+          title: message_title,
+          autoCancel: true,
+          every: 5,
+          sound: null
+        }).then(function () {
+          console.log("The notification has been set");
+        });
+      }
+      else{
+
+        $cordovaLocalNotification.add({
+          id: notification_id,
+          date: alarmTime,
+          message: message_body,
+          title: message_title,
+          autoCancel: true,
+          sound: null
+        }).then(function () {
+          console.log("The notification has been set");
+        });
+      }
+
+      alert("Notification Saved!");
+    }
 
     function saveShowCallback(data) {
       console.log(data);

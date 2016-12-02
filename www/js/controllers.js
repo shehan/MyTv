@@ -277,9 +277,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         {id: '', name: ''}
     ];
 
-    $scope.AssignedTags = [
-      {id: ''}
-    ];
+    $scope.AssignedTags = [];
 
     $scope.tagSelectModel = [];
 

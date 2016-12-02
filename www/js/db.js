@@ -214,7 +214,10 @@ function addShow(show_id, name, date, day, time, repeat, channel, notes, show_ov
   $cordovaSQLite.execute(db, sql_insert_show)
     .then(function (result) {
       var insertId = result.insertId;
-      return addTagsToShow(insertId, tagList,$cordovaSQLite,callback);
+      if (tagList.length != 0)
+        return addTagsToShow(insertId, tagList,$cordovaSQLite,callback);
+      else
+        callback(insertId);
     }, function (err) {
       alert('Cannot insert show');
       console.log(err);
@@ -223,7 +226,7 @@ function addShow(show_id, name, date, day, time, repeat, channel, notes, show_ov
 }
 
 function addTagsToShow(show_id, tagList, $cordovaSQLite, callback){
-  var sql_insert_tag = "INSERT INTO show_tag ( id_show, id_tag) VALUES "
+  var sql_insert_tag = "INSERT INTO show_tag ( id_show, id_tag) VALUES ";
   for(var i=0;i<tagList.length;i++){
     if (i == tagList.length -1){
       sql_insert_tag = sql_insert_tag + "("+show_id+", "+tagList[i].id+");"

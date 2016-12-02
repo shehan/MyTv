@@ -404,6 +404,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         $scope.showNotes.value,
         escape($scope.showOverview.value),
         imgData,
+        $scope.AssignedTags,
         $cordovaSQLite,
         saveShowCallback
       );

@@ -204,18 +204,40 @@ function updateTag(tagId, newTagName, $cordovaSQLite, callback) {
 
 }
 
-function addShow(show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop, $cordovaSQLite, callback) {
+function addShow(show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop,tagList, $cordovaSQLite, callback) {
 
-  var sql_insert_show = 'INSERT INTO show (show_id, name, date, day,   time, repeat, channel, notes, show_overview, show_backdrop) VALUES ' +
+  var sql_insert_show = 'INSERT INTO show (show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop) VALUES ' +
                           '("'+show_id+'","'+name+'","'+date+'","'+day+'","'+time+'",'+repeat+','+channel+',"'+notes+'","'+show_overview+'","'+show_backdrop+'")';
 
 
   console.log("Database - Insert Show");
   $cordovaSQLite.execute(db, sql_insert_show)
     .then(function (result) {
-      return getAllTags($cordovaSQLite, callback);
+      var insertId = result.insertId;
+      return addTagsToShow(insertId, tagList,$cordovaSQLite,callback);
     }, function (err) {
-      alert('Cannot insert tag');
+      alert('Cannot insert show');
+      console.log(err);
+    });
+
+}
+
+function addTagsToShow(show_id, tagList, $cordovaSQLite, callback){
+  var sql_insert_tag = "INSERT INTO show_tag ( id_show, id_tag) VALUES "
+  for(var i=0;i<tagList.length;i++){
+    if (i == tagList.length -1){
+      sql_insert_tag = sql_insert_tag + "("+show_id+", "+tagList[i].id+");"
+    }
+    else{
+      sql_insert_tag = sql_insert_tag + "("+show_id+", "+tagList[i].id+"),"
+    }
+  }
+
+  $cordovaSQLite.execute(db, sql_insert_tag)
+    .then(function (result) {
+      return callback(show_id);
+    }, function (err) {
+      alert('Cannot insert show_tag');
       console.log(err);
     });
 

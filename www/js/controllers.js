@@ -162,7 +162,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
   })
 
 //**************** START: MyShowsController ****************//
-  .controller('DashCtrl', function ($scope,$cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading) {
+  .controller('DashCtrl', function ($scope,$cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading, $cordovaLocalNotification) {
 
     $scope.doRefresh = function() {
       $scope.show();
@@ -186,6 +186,41 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         time:null
       }]
     };
+
+    $scope.gestureHold = function(){
+        alert('hold');
+
+    };
+
+    $scope.gestureTap = function(){
+      alert('tap');
+
+    };
+
+    $scope.showRemove = function (show) {
+      var confirmPopup  = $ionicPopup.confirm({
+        title: 'Remove Show - '+show.name,
+        template: 'Are you sure you want to delete this show?'
+      });
+
+      confirmPopup.then(function(res) {
+        if(res) {
+          $scope.show();
+          deleteShow(show.id,$cordovaSQLite, deleteShowCallback);
+ /*         $cordovaLocalNotification.cancel(show.notification_id, function() {
+            alert("done");
+          });*/
+        } else {
+          console.log('Deletion canceled !');
+        }
+      });
+    };
+
+    function deleteShowCallback(){
+      $scope.hide();
+      alert('delete show callback');
+      $scope.doRefresh()
+    }
 
 
     $scope.show = function() {
@@ -227,20 +262,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
   //**************** END: MyShowsController ****************//
 
 
-  .controller('ChatsCtrl', function ($scope, Chats) {
-    // With the new view caching in Ionic, Controllers are only called
-    // when they are recreated or on app start, instead of every page change.
-    // To listen for when this page is active (for example, to refresh data),
-    // listen for the $ionicView.enter event:
-    //
-    //$scope.$on('$ionicView.enter', function(e) {
-    //});
 
-    $scope.chats = Chats.all();
-    $scope.remove = function (chat) {
-      Chats.remove(chat);
-    };
-  })
 
   .controller('ChatDetailCtrl', function ($scope, $stateParams, Chats) {
     $scope.chat = Chats.get($stateParams.chatId);
@@ -250,7 +272,6 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
   .controller('AddShowController', function ($scope,$stateParams, $cordovaSQLite, $ionicLoading, $ionicPopup, $cordovaLocalNotification) {
     $scope.showId = $stateParams.showId;
-
 
     // Code that is executed every time view is opened
     $scope.$on('$ionicView.enter', function() {

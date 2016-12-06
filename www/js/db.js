@@ -100,7 +100,6 @@ function DB_PopulateGenre(result){
 
 }
 
-
 function getAllGenres(callback) {
   var sql_select = 'SELECT * FROM genre';
 
@@ -175,7 +174,6 @@ function addTag(tagName, $cordovaSQLite, callback) {
 
 }
 
-
 function removeTag(tagId, $cordovaSQLite, callback) {
   var sql_delete_tag = 'DELETE FROM tag WHERE id = '+tagId;
 
@@ -222,6 +220,26 @@ function addShow(show_id, name, date, day, time, repeat, channel, notes, show_ov
         callback(insertId);
     }, function (err) {
       alert('Cannot insert show');
+      console.log(err);
+    });
+
+}
+
+function deleteShow(showId, $cordovaSQLite, callback){
+  var sql_delete_show = 'DELETE FROM show WHERE id = '+showId;
+  var sql_delete_show_tag = 'DELETE FROM show_tag WHERE id_show = '+showId;
+
+  return $cordovaSQLite.execute(db, sql_delete_show_tag)
+    .then(function (result) {
+      return $cordovaSQLite.execute(db, sql_delete_show)
+        .then(function (result) {
+          callback();
+        }, function (err) {
+          alert('Cannot delete show');
+          console.log(err);
+        });
+    }, function (err) {
+      alert('Cannot delete show_tag');
       console.log(err);
     });
 

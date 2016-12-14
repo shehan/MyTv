@@ -935,26 +935,58 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
 
 //**************** START: AboutController ****************//
-  .controller('AboutController', function ($scope, $ionicPopup, $actionButton, $ionicLoading) {
-  $scope.input = {
-    searchQuery: ''
-  };
+  .controller('AboutController', function ($scope, $ionicPopup, $actionButton, $ionicLoading, $cordovaSQLite, $cordovaLocalNotification) {
+    $scope.input = {
+      searchQuery: ''
+    };
 
 
-  $scope.show = function() {
-    $ionicLoading.show({
-      template: '<ion-spinner icon="bubbles"></ion-spinner><p>LOADING...</p>',
-      duration: 3000
-    }).then(function(){
-      console.log("The loading indicator is now displayed");
-    });
-  };
-  $scope.hide = function(){
-    $ionicLoading.hide().then(function(){
-      console.log("The loading indicator is now hidden");
-    });
-  };
+    $scope.show = function () {
+      $ionicLoading.show({
+        template: '<ion-spinner icon="bubbles"></ion-spinner><p>LOADING...</p>',
+        duration: 3000
+      }).then(function () {
+        console.log("The loading indicator is now displayed");
+      });
+    };
+    $scope.hide = function () {
+      $ionicLoading.hide().then(function () {
+        console.log("The loading indicator is now hidden");
+      });
+    };
+
+    $scope.resetContent = function () {
+      var confirmPopup = $ionicPopup.confirm({
+        title: 'Reset Content',
+        template: 'Are you sure you want to delete all content?'
+      });
+
+      confirmPopup.then(function (res) {
+        if (res) {
+          $scope.show();
+          deleteAllContent($cordovaSQLite, resetContentCallback);
+          try {
+            $cordovaLocalNotification.cancelAll(function () {
+              alert("All notifications have been removed.");
+            }, this);
+          }
+          catch (err) {
+            console.log(err);
+          }
+        } else {
+          console.log('Deletion canceled !');
+        }
+      });
+    };
+
+    function resetContentCallback() {
+      $ionicPopup.alert({
+        title: 'Reset Content',
+        template: 'Content has been deleted. You might need to refresh your screens.'
+      });
+      $scope.hide();
+    }
 
 
-});
+  });
 //**************** END: AboutController ****************//

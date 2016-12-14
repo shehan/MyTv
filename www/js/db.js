@@ -399,6 +399,28 @@ function addTagsToShow(show_id, tagList, $cordovaSQLite, callback){
 
 }
 
+function deleteAllContent($cordovaSQLite, callback){
+  var sql_delete_shows = 'DELETE FROM show';
+  var sql_delete_tags = 'DELETE FROM tag';
+  var sql_delete_show_tags = 'DELETE FROM show_tag';
+
+  console.log("Database - Delete All Records");
+    return $cordovaSQLite.execute(db, sql_delete_show_tags)
+      .then(function (result1) {
+        return $cordovaSQLite.execute(db, sql_delete_tags)
+          .then(function (result2) {
+            return $cordovaSQLite.execute(db, sql_delete_shows)
+              .then(function(result3){
+                return callback();
+              })
+          })
+      }, function (err) {
+        return callback();
+        alert('..Cannot delete records..');
+        console.error(err);
+      });
+}
+
   function DB_Test($cordovaSQLite)
   {
 

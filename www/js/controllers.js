@@ -162,7 +162,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
   })
 
 //**************** START: MyShowsController ****************//
-  .controller('DashCtrl', function ($scope,$cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading, $cordovaLocalNotification) {
+  .controller('DashCtrl', function ($scope,$cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading, $cordovaLocalNotification, $state) {
 
     $scope.doRefresh = function() {
       $scope.show();
@@ -192,9 +192,8 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
     };
 
-    $scope.gestureTap = function(){
-      alert('tap');
-
+    $scope.gestureTap = function(show){
+      $state.go('tab.my-show-details', {Id: show.id, showId: show.show_id})
     };
 
     $scope.showRemove = function (show) {
@@ -218,7 +217,6 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
     function deleteShowCallback(){
       $scope.hide();
-      alert('delete show callback');
       $scope.doRefresh()
     }
 
@@ -424,6 +422,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         imgData,
         $scope.AssignedTags,
         notification_id,
+        Date.parse($scope.showTime.value),
         $cordovaSQLite,
         saveShowCallback
       );
@@ -521,6 +520,255 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
 
 //**************** END: AddShowController ****************//
+
+
+  //**************** START: ViewShowDetailsController ****************//
+
+  .controller('ViewShowDetailsController', function ($scope,$stateParams, $cordovaSQLite, $ionicLoading, $ionicPopup, $cordovaLocalNotification) {
+    $scope.id = $stateParams.Id;
+    $scope.showId = $stateParams.showId;
+
+    $scope.show={};
+
+    $scope.showName= { value: '' };
+    $scope.showRepeat = { value: false };
+    $scope.showDate = { value: new Date(Date.now()) };
+    $scope.showTime = { value: null };
+    $scope.showChannel = { value: null };
+    $scope.showNotes = { value: '' };
+    $scope.showOverview= { value: '' };
+    $scope.showBackdrop= { value: null };
+    $scope.showLocalNotificationId= { value: null };
+
+
+    $scope.TvShow='';
+
+    $scope.AllTags = [
+      {id: '', name: ''}
+    ];
+
+    $scope.AssignedTags = [];
+
+    $scope.tagSelectModel = [];
+
+
+    $scope.onModelItemSelected = function(newValue, oldValue) {
+      $scope.AssignedTags = newValue;
+      console.log(newValue + ":" + oldValue);
+    };
+
+
+
+    $scope.show = function() {
+      $ionicLoading.show({
+        template: '<ion-spinner icon="bubbles"></ion-spinner><p>LOADING...</p>'
+      }).then(function(){
+        console.log("The loading indicator is now displayed");
+      });
+    };
+    $scope.hide = function(){
+      $ionicLoading.hide().then(function(){
+        console.log("The loading indicator is now hidden");
+      });
+    };
+
+    $scope.show();
+    getShowById($scope.id,$cordovaSQLite, DisplayShowDetails);
+
+
+    $scope.show();
+    getTagsForShow($scope.id,$cordovaSQLite, getTagsForShowCallback);
+    getAllTags($cordovaSQLite, getAllTagsCallback);
+
+    function formatHHMM(date) {
+      function z(n){return (n<10?'0':'') + n;}
+      var h = date.getHours();
+      return z(h%12) + ':' + z(date.getMinutes()) + ' ' + (h<12?'AM':'PM');
+    }
+
+    $scope.saveShow = function() {
+
+      if ($scope.showName.value == undefined ||$scope.showName.value == ''){
+        $ionicPopup.alert({
+          title: 'Add Show',
+          template: 'Please enter a Show name'
+        });
+        return;
+      }
+
+      if ($scope.showDate.value == undefined ||$scope.showDate.value == ''){
+        $ionicPopup.alert({
+          title: 'Add Show',
+          template: 'Please enter a Show date'
+        });
+        return;
+      }
+      else{
+        var timestamp=Date.parse($scope.showDate.value);
+        if (isNaN(timestamp)!=false)
+        {
+          $ionicPopup.alert({
+            title: 'Add Show',
+            template: 'Please enter a valid Show date'
+          });
+          return;
+        }
+      }
+
+      if ($scope.showTime.value != null || $scope.showTime.value == undefined) {
+        var timestamp = Date.parse($scope.showTime.value);
+        if (isNaN(timestamp) != false) {
+          $ionicPopup.alert({
+            title: 'Add Show',
+            template: 'Please enter a valid Show time'
+          });
+          return;
+        }
+      }
+
+      var date_parsed = Date.parse($scope.showDate.value);
+      var date_value = new Date(date_parsed).toLocaleDateString();
+
+      var time_parsed = Date.parse($scope.showTime.value);
+      var time_value = formatHHMM(new Date(time_parsed));
+      var time_object = new Date(time_parsed);
+
+      var repeat_value = $scope.showRepeat.value?1:0;
+
+      var weekday = new Array(7);
+      weekday[0] = "Sunday";
+      weekday[1] = "Monday";
+      weekday[2] = "Tuesday";
+      weekday[3] = "Wednesday";
+      weekday[4] = "Thursday";
+      weekday[5] = "Friday";
+      weekday[6] = "Saturday";
+
+      var d = new Date(date_parsed);
+      var day= weekday[d.getDay()];
+
+
+      $scope.show();
+
+      updateShow(
+        $scope.id,
+      $scope.showId,
+        $scope.showName.value,
+        date_value,
+        day,
+        time_value  ,
+        repeat_value,
+        $scope.showChannel.value,
+        $scope.showNotes.value,
+        escape($scope.showOverview.value),
+        $scope.AssignedTags,
+        Date.parse($scope.showTime.value),
+        $cordovaSQLite,
+        updateShowCallback
+      );
+
+      updateLocalNotification($scope.showId, $scope.showName.value, $scope.showChannel.value, repeat_value, date_value, time_object,$scope.showLocalNotificationId)
+
+    };
+
+    function updateLocalNotification(show_id, show_name, show_channel, show_repeat, date_value, time_object, notification_id){
+      var message_title = "MyTV Reminder";
+      var message_body = show_name +" starts in 30 minutes";
+      if (show_channel != null || show_channel != '')
+        message_body = message_body +" on channel "+show_channel;
+
+      var alarmTime;
+      alarmTime = new Date(date_value);
+      alarmTime.setHours(time_object.getHours(),time_object.getMinutes(),0);
+
+      if (show_repeat){
+        $cordovaLocalNotification.update({
+          id: notification_id,
+          firstAt: alarmTime,
+          message: message_body,
+          title: message_title,
+          autoCancel: true,
+          every: 5,
+          sound: null
+        }).then(function () {
+          console.log("The notification has been set");
+        });
+      }
+      else{
+
+        $cordovaLocalNotification.update({
+          id: notification_id,
+          date: alarmTime,
+          message: message_body,
+          title: message_title,
+          autoCancel: true,
+          sound: null
+        }).then(function () {
+          console.log("The notification has been set");
+        });
+      }
+
+      alert("Notification Saved!");
+    }
+
+    function updateShowCallback(data) {
+      console.log(data);
+      $ionicPopup.alert({
+        title: 'Add Show',
+        template: $scope.showName.value+' has been updated!'
+      });
+      $scope.hide();
+    }
+
+
+    function getTagsForShowCallback(data) {
+      $scope.tagSelectModel.length = 0;
+      for (var i = 0; i < data.rows.length; i++) {
+        $scope.tagSelectModel.push({
+          id: data.rows.item(i).tag_id,
+          name: data.rows.item(i).tag_name
+        });
+      }
+      $scope.$apply();
+      $scope.hide();
+    }
+
+    function getAllTagsCallback(data) {
+      $scope.AllTags.length = 0;
+      for (var i = 0; i < data.rows.length; i++) {
+        $scope.AllTags.push({
+          id: data.rows.item(i).id,
+          name: data.rows.item(i).name
+        });
+      }
+      $scope.hide();
+    }
+
+    function DisplayShowDetails(data){
+      if(data != null){
+
+        var date_parsed = new Date( data.rows[0].date);
+        var time_parsed = new Date( data.rows[0].raw_date);
+
+        $scope.showName.value = data.rows[0].name;
+        $scope.showRepeat.value =data.rows[0].repeat!=0;
+        $scope.showDate.value = date_parsed;
+        $scope.showTime.value = time_parsed;
+        $scope.showChannel.value =  data.rows[0].channel;
+        $scope.showNotes.value =  data.rows[0].notes;
+        $scope.showOverview= data.rows[0].show_overview;
+        $scope.showLocalNotificationId = data.rows[0].notification_id;
+      }
+      $scope.hide();
+    }
+
+
+  })
+
+
+  //**************** END: ViewShowDetailsController ****************//
+
+
 
 
 //**************** START: SearchController ****************//

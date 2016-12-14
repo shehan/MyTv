@@ -26,6 +26,7 @@ function initDatabase($cordovaSQLite) {
                       'date VARCHAR(255), ' +
                       'day VARCHAR(255), ' +
                       'time VARCHAR(255), ' +
+                      'raw_date DATETIME, ' +
                       'channel INTEGER, ' +
                       'repeat BOOLEAN, ' +
                       'show_overview TEXT,' +
@@ -204,10 +205,26 @@ function updateTag(tagId, newTagName, $cordovaSQLite, callback) {
 
 }
 
-function addShow(show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop,tagList,notification_id, $cordovaSQLite, callback) {
+function updateShow(id, show_id, name, date, day, time, repeat, channel, notes, show_overview,tagList,raw_date, $cordovaSQLite, callback) {
 
-  var sql_insert_show = 'INSERT INTO show (show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop, notification_id) VALUES ' +
-                          '("'+show_id+'","'+name+'","'+date+'","'+day+'","'+time+'",'+repeat+','+channel+',"'+notes+'","'+show_overview+'","'+show_backdrop+'",'+notification_id+')';
+  var sql_update_show = 'UPDATE show SET name="'+name+'", date="'+date+'", day="'+day+'", time="'+time+'", repeat='+repeat+', channel='+channel+', notes="'+notes+'", raw_date='+raw_date+' WHERE id='+id;
+
+
+  console.log("Database - Update Show");
+  $cordovaSQLite.execute(db, sql_update_show)
+    .then(function (result) {
+      callback()
+    }, function (err) {
+      alert('Cannot update show');
+      console.log(err);
+    });
+
+}
+
+function addShow(show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop,tagList,notification_id,raw_date, $cordovaSQLite, callback) {
+
+  var sql_insert_show = 'INSERT INTO show (show_id, name, date, day, time, repeat, channel, notes, show_overview, show_backdrop, notification_id, raw_date) VALUES ' +
+                          '("'+show_id+'","'+name+'","'+date+'","'+day+'","'+time+'",'+repeat+','+channel+',"'+notes+'","'+show_overview+'","'+show_backdrop+'",'+notification_id+','+raw_date+')';
 
 
   console.log("Database - Insert Show");
@@ -220,6 +237,20 @@ function addShow(show_id, name, date, day, time, repeat, channel, notes, show_ov
         callback(insertId);
     }, function (err) {
       alert('Cannot insert show');
+      console.log(err);
+    });
+
+}
+
+function getShowById(id, $cordovaSQLite, callback) {
+
+  var sql_get_show = 'SELECT * FROM show WHERE id = '+id;
+
+  $cordovaSQLite.execute(db, sql_get_show)
+    .then(function (result) {
+        callback(result);
+    }, function (err) {
+      alert('Cannot get show');
       console.log(err);
     });
 
@@ -243,6 +274,23 @@ function deleteShow(showId, $cordovaSQLite, callback){
       console.log(err);
     });
 
+}
+
+function getTagsForShow(id, $cordovaSQLite, callback){
+
+  var sql_get_show_tags = 'SELECT show_tag.id AS "show_tag_id", show_tag.id_show AS "show_tag_id_show", show_tag.id_tag AS "show_tag_id_tag", tag.id AS "tag_id", tag.name AS "tag_name" ' +
+    'FROM show_tag ' +
+    'INNER JOIN tag ON (tag.id = show_tag.id_tag) ' +
+    'WHERE show_tag.id_show = '+id+'';
+  //var sql_get_show_tags = 'SELECT * FROM show_tag WHERE id_show = '+id;
+
+  $cordovaSQLite.execute(db, sql_get_show_tags)
+    .then(function (result) {
+      callback(result);
+    }, function (err) {
+      alert('Cannot get show tags');
+      console.log(err);
+    });
 }
 
 function addTagsToShow(show_id, tagList, $cordovaSQLite, callback){

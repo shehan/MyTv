@@ -71,8 +71,9 @@
       <ion-item ng-repeat="item in AllTags.results" class="item item-text-wrap">
         <div>
           <div class="item-avatar">
-            <img onerror="this.src='../img/image_placeholder_avatar.jpg'"
-                 ng-src="http://image.tmdb.org/t/p/w92{{item.poster_path}}">
+            <img ng-if="item.poster_path == undefined" src="../img/image_placeholder_avatar.jpg">
+            <img ng-if="item.poster_path.length > 0" ng-src="http://image.tmdb.org/t/p/w92{{item.poster_path}}">
+
             <h2>{{item.name}}</h2>
             <p class="subdued">
               <span style="font-style:italic" ng-repeat="genre in item.genre_ids">{{genre}}{{$last ? '' : ', '}}</span>
@@ -82,8 +83,8 @@
             </p>
           </div>
 
-          <img class="full-image" onerror="this.src='../img/image_placeholder_banner.jpg'"
-               ng-src="http://image.tmdb.org/t/p/w300{{item.backdrop_path}}">
+          <img style="width: 300px;height: 170px;" ng-if="item.backdrop_path == undefined" class="full-image" src="../img/image_placeholder_avatar.jpg">
+          <img ng-if="item.backdrop_path.length > 0" class="full-image" ng-src="http://image.tmdb.org/t/p/w300{{item.backdrop_path}}">
 
           <div ng-class="isItemShown(item) ? 'item-expand active' : 'item-expand inactive'">
             <p>{{item.overview}}</p>

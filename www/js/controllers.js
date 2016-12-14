@@ -1,5 +1,6 @@
 angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal-select'])
 
+//**************** START: TagListingController ****************//
   .controller('TagListingController', function ($scope, $stateParams, $cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading) {
 
     $scope.AllTags = {
@@ -160,6 +161,8 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
 
   })
+//**************** END: TagListingController ****************//
+
 
 //**************** START: MyShowsController ****************//
   .controller('DashCtrl', function ($scope,$cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading, $cordovaLocalNotification, $state) {
@@ -261,7 +264,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
       $scope.hide();
     }
   })
-  //**************** END: MyShowsController ****************//
+//**************** END: MyShowsController ****************//
 
 
 //**************** START: ViewShowTagsController ****************//
@@ -335,9 +338,12 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 //**************** END: ViewShowTagsController ****************//
 
 
+//**************** START: TODO ****************//
   .controller('ChatDetailCtrl', function ($scope, $stateParams, Chats) {
     $scope.chat = Chats.get($stateParams.chatId);
   })
+//**************** END: TODO ****************//
+
 
 //**************** START: AddShowController ****************//
   .controller('AddShowController', function ($scope,$stateParams, $cordovaSQLite, $ionicLoading, $ionicPopup, $cordovaLocalNotification) {
@@ -841,8 +847,6 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 //**************** END: ViewShowDetailsController ****************//
 
 
-
-
 //**************** START: SearchController ****************//
   .controller('SearchController', function ($scope,$stateParams, $ionicPopup, $actionButton, $ionicLoading, $state) {
     $scope.input = {
@@ -926,5 +930,31 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
       $scope.hide();
     }
-  });
+  })
 //**************** END: SearchController ****************//
+
+
+//**************** START: AboutController ****************//
+  .controller('AboutController', function ($scope, $ionicPopup, $actionButton, $ionicLoading) {
+  $scope.input = {
+    searchQuery: ''
+  };
+
+
+  $scope.show = function() {
+    $ionicLoading.show({
+      template: '<ion-spinner icon="bubbles"></ion-spinner><p>LOADING...</p>',
+      duration: 3000
+    }).then(function(){
+      console.log("The loading indicator is now displayed");
+    });
+  };
+  $scope.hide = function(){
+    $ionicLoading.hide().then(function(){
+      console.log("The loading indicator is now hidden");
+    });
+  };
+
+
+});
+//**************** END: AboutController ****************//

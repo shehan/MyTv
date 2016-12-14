@@ -14,7 +14,7 @@
 
       <label class="item item-input" id="show-time" name="Time">
         <span class="input-label">Time</span>
-        <input type="time" placeholder="" ng-model="showTime.value">
+        <input type="time" value='now' ng-model="showTime.value">
       </label>
 
       <ion-toggle toggle-class="toggle-balanced" ng-checked="showRepeat.value" id="show-repeat" ng-model="showRepeat.value">Repeat</ion-toggle>
@@ -59,4 +59,18 @@
 
     </form>
   </ion-content>
+  <script>
+    $(function(){
+      $('input[type="time"][value="now"]').each(function(){
+        var d = new Date(),
+          h = d.getHours(),
+          m = d.getMinutes();
+        if(h < 10) h = '0' + h;
+        if(m < 10) m = '0' + m;
+        $(this).attr({
+          'value': h + ':' + m
+        });
+      });
+    });
+  </script>
 </ion-view>

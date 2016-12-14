@@ -23,6 +23,14 @@
       <ion-item class="item-icon-left assertive item item-divider" id="myShows-list-item5" style="font-weight: 200">
         <i class="icon ion-ios-calendar-outline"></i> {{result.day}}, {{result.time}}</ion-item>
       </span>
+
+      <span ng-if=" result.tags.length != 0">
+      <p class="subdued dark item-icon-left item item-divider" style="font-size: 12px;padding-top: 5px;padding-bottom: 5px;">
+        <i class="icon ion-ios-pricetags-outline" style="font-size: 24px;"></i>
+        <span style="font-style:italic" ng-repeat="tag in result.tags">{{tag.tag_name}}{{$last ? '' : ', '}}</span>
+      </p>
+      </span>
+      </span>
     </div>
   </ion-content>
 

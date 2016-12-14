@@ -183,7 +183,8 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         show_backdrop:null,
         show_id:null,
         show_overview:null,
-        time:null
+        time:null,
+        tags:null
       }]
     };
 
@@ -239,19 +240,20 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
     function getAllShowsCallback(data){
       $scope.AllShows.items.length = 0;
-      for (var i = 0; i < data.rows.length; i++) {
+      for (var i = 0; i < data.length; i++) {
         $scope.AllShows.items.push({
-          channel:data.rows.item(i).channel,
-          date:data.rows.item(i).date,
-          day:data.rows.item(i).day,
-          id:data.rows.item(i).id,
-          name:data.rows.item(i).name,
-          notes:data.rows.item(i).notes,
-          repeat:data.rows.item(i).repeat,
-          show_backdrop:data.rows.item(i).show_backdrop,
-          show_id:data.rows.item(i).show_id,
-          show_overview:unescape(data.rows.item(i).show_overview),
-          time:data.rows.item(i).time
+          channel:data[i].show.channel,
+          date:data[i].show.date,
+          day:data[i].show.day,
+          id:data[i].show.id,
+          name:data[i].show.name,
+          notes:data[i].show.notes,
+          repeat:data[i].show.repeat,
+          show_backdrop:data[i].show.show_backdrop,
+          show_id:data[i].show.show_id,
+          show_overview:unescape(data[i].show.show_overview),
+          time:data[i].show.time,
+          tags:data[i].associated_tags
         });
       }
       $scope.hide();

@@ -151,10 +151,38 @@ function getAllShows($cordovaSQLite, callback) {
 
   var sql_select = 'SELECT * FROM show Order By name';
 
+  var sql_get_show_tags = 'SELECT ' +
+    'show_tag.id AS "show_tag_id", show_tag.id_show AS "show_tag_id_show", show_tag.id_tag AS "show_tag_id_tag",' +
+    'tag.id AS "tag_id", tag.name AS "tag_name" ' +
+    'FROM show_tag ' +
+    'INNER JOIN tag ON (tag.id = show_tag.id_tag) ';
+
+  var tags=[];
+  AllShows = [
+    {show: '', associated_tags: ''}
+  ];
+
+
   console.log("Database - Select All Shows");
-  $cordovaSQLite.execute(db, sql_select)
-    .then(function (result) {
-      return callback(result);
+  return $cordovaSQLite.execute(db, sql_select)
+    .then(function (result_shows) {
+      return $cordovaSQLite.execute(db, sql_get_show_tags)
+        .then(function (result_tags){
+          AllShows.length=0;
+          for(var i=0; i<result_shows.rows.length;i++){
+            for(var j=0;j<result_tags.rows.length;j++){
+              if(result_shows.rows.item(i).id == result_tags.rows.item(j).show_tag_id_show){
+                tags.push(result_tags.rows.item(j));
+              }
+            }
+            AllShows.push({
+              show: result_shows.rows.item(i),
+              associated_tags: (JSON.parse(JSON.stringify(tags)))
+            });
+            tags.length=0;
+          }
+          return callback(AllShows);
+        })
     }, function (err) {
       alert('Cannot get Shows');
       console.error(err);
@@ -282,6 +310,7 @@ function getTagsForShow(id, $cordovaSQLite, callback){
     'FROM show_tag ' +
     'INNER JOIN tag ON (tag.id = show_tag.id_tag) ' +
     'WHERE show_tag.id_show = '+id+'';
+
   //var sql_get_show_tags = 'SELECT * FROM show_tag WHERE id_show = '+id;
 
   $cordovaSQLite.execute(db, sql_get_show_tags)

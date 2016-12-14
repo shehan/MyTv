@@ -207,9 +207,9 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         if(res) {
           $scope.show();
           deleteShow(show.id,$cordovaSQLite, deleteShowCallback);
- /*         $cordovaLocalNotification.cancel(show.notification_id, function() {
+          $cordovaLocalNotification.cancel(show.notification_id, function() {
             alert("done");
-          });*/
+          })
         } else {
           console.log('Deletion canceled !');
         }
@@ -310,20 +310,22 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
     function getAllShowsByTagCallback(data){
       $scope.AllShows.items.length = 0;
-      for (var i = 0; i < data.rows.length; i++) {
-        $scope.AllShows.items.push({
-          channel:data.rows.item(i).show_channel,
-          date:data.rows.item(i).show_date,
-          day:data.rows.item(i).show_day,
-          id:data.rows.item(i).show_id,
-          name:data.rows.item(i).show_name,
-          notes:data.rows.item(i).show_notes,
-          repeat:data.rows.item(i).show_repeat,
-          show_backdrop:data.rows.item(i).show_show_backdrop,
-          show_id:data.rows.item(i).show_show_id,
-          show_overview:unescape(data.rows.item(i).show_show_overview),
-          time:data.rows.item(i).show_time
-        });
+      if (data != null) {
+        for (var i = 0; i < data.rows.length; i++) {
+          $scope.AllShows.items.push({
+            channel: data.rows.item(i).show_channel,
+            date: data.rows.item(i).show_date,
+            day: data.rows.item(i).show_day,
+            id: data.rows.item(i).show_id,
+            name: data.rows.item(i).show_name,
+            notes: data.rows.item(i).show_notes,
+            repeat: data.rows.item(i).show_repeat,
+            show_backdrop: data.rows.item(i).show_show_backdrop,
+            show_id: data.rows.item(i).show_show_id,
+            show_overview: unescape(data.rows.item(i).show_show_overview),
+            time: data.rows.item(i).show_time
+          });
+        }
       }
       $scope.hide();
     }

@@ -262,7 +262,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
   //**************** END: MyShowsController ****************//
 
 
-  //**************** START: ViewShowTagsController ****************//
+//**************** START: ViewShowTagsController ****************//
   .controller('ViewShowTagsController', function ($scope,$stateParams,$cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading, $state) {
     $scope.tagId = $stateParams.tagId;
     $scope.tagName = $stateParams.tagName;
@@ -330,7 +330,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
       $scope.hide();
     }
   })
-  //**************** END: ViewShowTagsController ****************//
+//**************** END: ViewShowTagsController ****************//
 
 
   .controller('ChatDetailCtrl', function ($scope, $stateParams, Chats) {
@@ -338,13 +338,15 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
   })
 
 //**************** START: AddShowController ****************//
-
   .controller('AddShowController', function ($scope,$stateParams, $cordovaSQLite, $ionicLoading, $ionicPopup, $cordovaLocalNotification) {
     $scope.showId = $stateParams.showId;
 
     // Code that is executed every time view is opened
     $scope.$on('$ionicView.enter', function() {
-      jQuery("#bannerImg").attr('src','http://image.tmdb.org/t/p/w300'+$scope.TvShow.backdrop_path);
+      if($scope.TvShow.backdrop_path == null)
+        jQuery("#bannerImg").attr('src','../img/image_placeholder_banner.jpg');
+      else
+        jQuery("#bannerImg").attr('src','http://image.tmdb.org/t/p/w300'+$scope.TvShow.backdrop_path);
     });
 
     $scope.show={};
@@ -504,7 +506,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
     function addLocalNotification(show_id, show_name, show_channel, show_repeat, date_value, time_object, notification_id){
       var message_title = "MyTV Reminder";
-      var message_body = show_name +" starts in 30 minutes";
+      var message_body = show_name +" is about to start";
       if (show_channel != null || show_channel != '')
         message_body = message_body +" on channel "+show_channel;
 
@@ -519,7 +521,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
           message: message_body,
           title: message_title,
           autoCancel: true,
-          every: 5,
+          every: "week", //5,
           sound: null
         }).then(function () {
           console.log("The notification has been set");
@@ -539,7 +541,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         });
       }
 
-      alert("Notification Saved!");
+     // alert("Notification Saved!");
     }
 
     function saveShowCallback(data) {
@@ -588,13 +590,10 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
     }
 
   })
-
-
 //**************** END: AddShowController ****************//
 
 
-  //**************** START: ViewShowDetailsController ****************//
-
+//**************** START: ViewShowDetailsController ****************//
   .controller('ViewShowDetailsController', function ($scope,$stateParams, $cordovaSQLite, $ionicLoading, $ionicPopup, $cordovaLocalNotification) {
     $scope.id = $stateParams.Id;
     $scope.showId = $stateParams.showId;
@@ -837,9 +836,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
 
   })
-
-
-  //**************** END: ViewShowDetailsController ****************//
+//**************** END: ViewShowDetailsController ****************//
 
 
 

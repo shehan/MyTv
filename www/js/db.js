@@ -189,6 +189,26 @@ function getAllShows($cordovaSQLite, callback) {
     });
 }
 
+function getAllShowsByTag(tagId, $cordovaSQLite, callback) {
+
+  var sql_query = 'SELECT ' +
+    'show.id AS "show_id", show.name AS "show_name", show.show_id AS "show_show_id", show.notes AS "show_notes", show.date AS "show_date", show.day AS "show_day", show.time AS "show_time", show.raw_date AS "show_raw_date", show.channel AS "show_channel", show.repeat AS "show_repeat", show.show_overview AS "show_show_overview", show.show_backdrop AS "show_show_backdrop", show.notification_id AS "show_notification_id", ' +
+    'show_tag.id AS "show_tag_id", show_tag.id_show AS "show_tag_id_show", show_tag.id_tag AS "show_tag_id_tag" ' +
+    'FROM show ' +
+    'INNER JOIN show_tag ON (show.id = show_tag.id_show) ' +
+    'WHERE show_tag.id_tag='+tagId+'';
+
+
+  console.log("Database - Select All Shows By Tag");
+  return $cordovaSQLite.execute(db, sql_query)
+    .then(function (result) {
+          return callback(result);
+    },function (err) {
+      alert('Cannot get Shows By Tag');
+      console.error(err);
+    });
+}
+
 function addTag(tagName, $cordovaSQLite, callback) {
   var sql_insert_tag = 'INSERT INTO tag (name) VALUES ("'+tagName+'")';
 

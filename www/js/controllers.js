@@ -262,6 +262,73 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
   //**************** END: MyShowsController ****************//
 
 
+  //**************** START: ViewShowTagsController ****************//
+  .controller('ViewShowTagsController', function ($scope,$stateParams,$cordovaSQLite, $ionicPopup, $actionButton, $ionicLoading, $state) {
+    $scope.tagId = $stateParams.tagId;
+    $scope.tagName = $stateParams.tagName;
+
+    $scope.doRefresh = function() {
+      $scope.show();
+      getAllShowsByTag($scope.tagId, $cordovaSQLite, getAllShowsByTagCallback)
+      $scope.$broadcast('scroll.refreshComplete');
+      $scope.$apply()
+    };
+
+    $scope.AllShows = {
+      items: [{
+        channel:null,
+        date:null,
+        day:null,
+        id:null,
+        name:null,
+        notes:null,
+        repeat:null,
+        show_backdrop:null,
+        show_id:null,
+        show_overview:null,
+        time:null,
+        tags:null
+      }]
+    };
+
+
+    $scope.show = function() {
+      $ionicLoading.show({
+        template: '<ion-spinner icon="bubbles"></ion-spinner><p>LOADING...</p>'
+      }).then(function(){
+        console.log("The loading indicator is now displayed");
+      });
+    };
+    $scope.hide = function(){
+      $ionicLoading.hide().then(function(){
+        console.log("The loading indicator is now hidden");
+      });
+    };
+
+    $scope.show();
+    getAllShowsByTag($scope.tagId, $cordovaSQLite, getAllShowsByTagCallback)
+
+    function getAllShowsByTagCallback(data){
+      $scope.AllShows.items.length = 0;
+      for (var i = 0; i < data.rows.length; i++) {
+        $scope.AllShows.items.push({
+          channel:data.rows.item(i).show_channel,
+          date:data.rows.item(i).show_date,
+          day:data.rows.item(i).show_day,
+          id:data.rows.item(i).show_id,
+          name:data.rows.item(i).show_name,
+          notes:data.rows.item(i).show_notes,
+          repeat:data.rows.item(i).show_repeat,
+          show_backdrop:data.rows.item(i).show_show_backdrop,
+          show_id:data.rows.item(i).show_show_id,
+          show_overview:unescape(data.rows.item(i).show_show_overview),
+          time:data.rows.item(i).show_time
+        });
+      }
+      $scope.hide();
+    }
+  })
+  //**************** END: ViewShowTagsController ****************//
 
 
   .controller('ChatDetailCtrl', function ($scope, $stateParams, Chats) {

@@ -67,6 +67,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
         }
       })
 
+      .state('tab.show-tags', {
+        url: '/show-tags/:tagId/:tagName',
+        views: {
+          'tab-my-shows': {
+            templateUrl: 'templates/tab-show-tags.html',
+            controller: 'ViewShowTagsController'
+          }
+        }
+      })
+
       .state('tab.chats', {
         url: '/chats',
         views: {

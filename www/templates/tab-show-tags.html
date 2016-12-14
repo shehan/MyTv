@@ -1,14 +1,14 @@
 
 
 
-<ion-view view-title="My Shows">
+<ion-view view-title="{{tagName}} Shows">
   <ion-content padding="true" class="has-header">
     <ion-refresher pulling-text="Pull to refresh" on-refresh="doRefresh()"></ion-refresher>
 
     <span ng-if=" AllShows.items.length == 0">
       <div class="card">
         <div class="item item-text-wrap">
-          Looks like you haven't added any shows.
+          Looks like you don't have any shows with this tag.
           <a  href="#/tab/search" id="myshowPage-button9">Tap here to search for your shows</a>.
         </div>
       </div>
@@ -24,12 +24,6 @@
         <i class="icon ion-ios-calendar-outline"></i> {{result.day}}, {{result.time}}</ion-item>
       </span>
 
-      <span ng-if=" result.tags.length != 0">
-      <p class="subdued dark item-icon-left item item-divider" style="font-size: 14px;padding-top: 5px;padding-bottom: 5px;">
-        <i class="icon ion-ios-pricetags-outline" style="font-size: 24px;"></i>
-        <span style="font-style:italic" ng-repeat="tag in result.tags"><a class="dark" href="#/tab/show-tags/{{tag.tag_id}}/{{tag.tag_name}}"> {{tag.tag_name}}</a>{{$last ? '' : ', '}}</span>
-      </p>
-      </span>
       </span>
     </div>
   </ion-content>

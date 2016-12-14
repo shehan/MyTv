@@ -3,6 +3,7 @@
  */
 var db = window.openDatabase("MyTV.db", '1.0', 'MyTV Database', 65536);
 var cordovaSQLite = null;
+
 function initDatabase($cordovaSQLite) {
   try {
 
@@ -164,29 +165,38 @@ function getAllShows($cordovaSQLite, callback) {
 
 
   console.log("Database - Select All Shows");
-  return $cordovaSQLite.execute(db, sql_select)
-    .then(function (result_shows) {
-      return $cordovaSQLite.execute(db, sql_get_show_tags)
-        .then(function (result_tags){
-          AllShows.length=0;
-          for(var i=0; i<result_shows.rows.length;i++){
-            for(var j=0;j<result_tags.rows.length;j++){
-              if(result_shows.rows.item(i).id == result_tags.rows.item(j).show_tag_id_show){
-                tags.push(result_tags.rows.item(j));
+  try {
+    return $cordovaSQLite.execute(db, sql_select)
+      .then(function (result_shows) {
+        return $cordovaSQLite.execute(db, sql_get_show_tags)
+          .then(function (result_tags) {
+            AllShows.length = 0;
+            for (var i = 0; i < result_shows.rows.length; i++) {
+              for (var j = 0; j < result_tags.rows.length; j++) {
+                if (result_shows.rows.item(i).id == result_tags.rows.item(j).show_tag_id_show) {
+                  tags.push(result_tags.rows.item(j));
+                }
               }
+              AllShows.push({
+                show: result_shows.rows.item(i),
+                associated_tags: (JSON.parse(JSON.stringify(tags)))
+              });
+              tags.length = 0;
             }
-            AllShows.push({
-              show: result_shows.rows.item(i),
-              associated_tags: (JSON.parse(JSON.stringify(tags)))
-            });
-            tags.length=0;
-          }
-          return callback(AllShows);
-        })
-    }, function (err) {
-      alert('Cannot get Shows');
-      console.error(err);
-    });
+            return callback(AllShows);
+          })
+      }, function (err) {
+        AllShows.length =0;
+        return callback(AllShows);
+        alert('..Cannot get Shows..');
+        console.error(err);
+      });
+  }
+  catch (err){
+    alert('yikes');
+    callback(null);
+    alert('opps')
+  }
 }
 
 function getAllShowsByTag(tagId, $cordovaSQLite, callback) {

@@ -187,7 +187,8 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         show_id:null,
         show_overview:null,
         time:null,
-        tags:null
+        tags:null,
+        notificationId:null
       }]
     };
 
@@ -210,10 +211,14 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         if(res) {
           $scope.show();
           deleteShow(show.id,$cordovaSQLite, deleteShowCallback);
-          alert('about to cancel:'+show.notification_id);
-          $cordovaLocalNotification.cancel(show.notification_id, function() {
-            alert("done");
-          })
+          try {
+            $cordovaLocalNotification.cancel(show.notificationId, function () {
+              alert("Notification removed!");
+            })
+          }
+          catch(err){
+            console.log(err);
+          }
         } else {
           console.log('Deletion canceled !');
         }
@@ -258,7 +263,8 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
           show_id:data[i].show.show_id,
           show_overview:unescape(data[i].show.show_overview),
           time:data[i].show.time,
-          tags:data[i].associated_tags
+          tags:data[i].associated_tags,
+          notificationId:data[i].show.notification_id
         });
       }
       $scope.hide();

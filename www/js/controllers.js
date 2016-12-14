@@ -207,6 +207,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         if(res) {
           $scope.show();
           deleteShow(show.id,$cordovaSQLite, deleteShowCallback);
+          alert('about to cancel:'+show.notification_id);
           $cordovaLocalNotification.cancel(show.notification_id, function() {
             alert("done");
           })
@@ -215,6 +216,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         }
       });
     };
+
 
     function deleteShowCallback(){
       $scope.hide();
@@ -344,7 +346,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
     // Code that is executed every time view is opened
     $scope.$on('$ionicView.enter', function() {
       if($scope.TvShow.backdrop_path == null)
-        jQuery("#bannerImg").attr('src','../img/image_placeholder_banner.jpg');
+        jQuery("#bannerImg").attr('src','img/image_placeholder_banner.jpg');
       else
         jQuery("#bannerImg").attr('src','http://image.tmdb.org/t/p/w300'+$scope.TvShow.backdrop_path);
     });

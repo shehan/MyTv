@@ -71,7 +71,7 @@
       <ion-item ng-repeat="item in AllTags.results" class="item item-text-wrap">
         <div>
           <div class="item-avatar">
-            <img ng-if="item.poster_path == undefined" src="../img/image_placeholder_avatar.jpg">
+            <img ng-if="item.poster_path == undefined" src="img/image_placeholder_avatar.jpg">
             <img ng-if="item.poster_path.length > 0" ng-src="http://image.tmdb.org/t/p/w92{{item.poster_path}}">
 
             <h2>{{item.name}}</h2>
@@ -83,7 +83,7 @@
             </p>
           </div>
 
-          <img style="width: 300px;height: 170px;" ng-if="item.backdrop_path == undefined" class="full-image" src="../img/image_placeholder_avatar.jpg">
+          <img style="width: 300px;height: 170px;" ng-if="item.backdrop_path == undefined" class="full-image" src="img/image_placeholder_avatar.jpg">
           <img ng-if="item.backdrop_path.length > 0" class="full-image" ng-src="http://image.tmdb.org/t/p/w300{{item.backdrop_path}}">
 
           <div ng-class="isItemShown(item) ? 'item-expand active' : 'item-expand inactive'">

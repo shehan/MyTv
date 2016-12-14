@@ -51,10 +51,10 @@
       </div>
 
 
-      <img ng-if="TvShow.backdrop_path == null" style="display: none" src="../img/image_placeholder_banner.jpg" crossOrigin="Anonymous"
+      <img ng-if="TvShow.backdrop_path == null" style="display: none" src="img/image_placeholder_banner.jpg" crossOrigin="Anonymous"
            id="bannerImg" />
 
-      <img ng-if="TvShow.backdrop_path.length >0" style="display: none" onerror="this.src='../img/image_placeholder_banner.jpg'" crossOrigin="Anonymous"
+      <img ng-if="TvShow.backdrop_path.length >0" style="display: none"  crossOrigin="Anonymous"
       ng-src="http://image.tmdb.org/t/p/w300{{TvShow.backdrop_path}}" id="bannerImg" />
 
     </form>

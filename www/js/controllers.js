@@ -731,7 +731,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
           name: data.rows.item(i).tag_name
         });
       }
-      $scope.$apply();
+      $scope.AssignedTags = $scope.tagSelectModel;
       $scope.hide();
     }
 

@@ -293,6 +293,32 @@ function getTagsForShow(id, $cordovaSQLite, callback){
     });
 }
 
+function updateTagsForShow(show_id, tagList, $cordovaSQLite, callback){
+  var sql_delete_tag = 'DELETE FROM show_tag WHERE id_show = '+show_id;
+
+  var sql_insert_tag = "INSERT INTO show_tag ( id_show, id_tag) VALUES ";
+  for(var i=0;i<tagList.length;i++){
+    if (i == tagList.length -1){
+      sql_insert_tag = sql_insert_tag + "("+show_id+", "+tagList[i].id+");"
+    }
+    else{
+      sql_insert_tag = sql_insert_tag + "("+show_id+", "+tagList[i].id+"),"
+    }
+  }
+
+  return $cordovaSQLite.execute(db, sql_delete_tag)
+    .then(function (result) {
+      return $cordovaSQLite.execute(db, sql_insert_tag)
+        .then(function (result){
+          return callback(show_id);
+        })
+    }, function (err) {
+      alert('Cannot update show_tag');
+      console.log(err);
+    });
+
+}
+
 function addTagsToShow(show_id, tagList, $cordovaSQLite, callback){
   var sql_insert_tag = "INSERT INTO show_tag ( id_show, id_tag) VALUES ";
   for(var i=0;i<tagList.length;i++){

@@ -652,7 +652,7 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
 
       updateShow(
         $scope.id,
-      $scope.showId,
+        $scope.showId,
         $scope.showName.value,
         date_value,
         day,
@@ -666,6 +666,8 @@ angular.module('starter.controllers', ['ngCordova','$actionButton', 'ionic-modal
         $cordovaSQLite,
         updateShowCallback
       );
+
+      updateTagsForShow( $scope.id, $scope.AssignedTags, $cordovaSQLite,null);
 
       updateLocalNotification($scope.showId, $scope.showName.value, $scope.showChannel.value, repeat_value, date_value, time_object,$scope.showLocalNotificationId)
 
